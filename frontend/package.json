@@ -10,9 +10,12 @@
     "dependencies": {
         "axios": "^0.19.2",
         "core-js": "^3.6.5",
+        "sass": "^1.26.10",
+        "sass-loader": "^9.0.2",
         "vue": "^2.6.11",
         "vue-router": "^3.3.4",
-        "vuetify": "^2.3.4"
+        "vuetify": "^2.3.4",
+        "vuex": "^3.5.1"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.4.0",
@@ -35,7 +38,27 @@
         "parserOptions": {
             "parser": "babel-eslint"
         },
-        "rules": {}
+        "rules": {
+            "vue/attributes-order": [
+                "error",
+                {
+                    "order": [
+                        "DEFINITION",
+                        "LIST_RENDERING",
+                        "CONDITIONALS",
+                        "RENDER_MODIFIERS",
+                        "GLOBAL",
+                        "UNIQUE",
+                        "TWO_WAY_BINDING",
+                        "OTHER_DIRECTIVES",
+                        "OTHER_ATTR",
+                        "EVENTS",
+                        "CONTENT"
+                    ],
+                    "alphabetical": false
+                }
+            ]
+        }
     },
     "browserslist": [
         "> 1%",

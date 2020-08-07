@@ -1,14 +1,27 @@
 <template>
     <v-app>
+        <Sidebar v-if="$route.path !== '/'" />
         <router-view />
     </v-app>
 </template>
 
 <script>
+import Sidebar from './components/Sidebar';
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'App',
-    components: {}
+    components: {
+        Sidebar
+    },
+    computed: {
+        ...mapGetters(['getLoggedUser'])
+    }
 };
 </script>
 
-<style></style>
+<style>
+#app .v-application--wrap {
+    flex-direction: row;
+}
+</style>

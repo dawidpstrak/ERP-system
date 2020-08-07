@@ -1,6 +1,6 @@
 <template>
     <div>
-        dashboard
+        Employee
     </div>
 </template>
 
@@ -8,4 +8,4 @@
 export default {};
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

@@ -7,12 +7,12 @@
             <v-card-text>
                 <v-form>
                     <v-text-field
-                        v-model="userData.email"
+                        v-model="credentials.email"
                         label="Email"
                         prepend-icon="mdi-account-circle"
-                    ></v-text-field>
+                    />
                     <v-text-field
-                        v-model="userData.password"
+                        v-model="credentials.password"
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         prepend-icon="mdi-lock"
                         :type="showPassword ? 'text' : 'password'"
@@ -31,13 +31,13 @@
 </template>
 
 <script>
-import axios from '../../plugins/axios';
+import { mapActions } from 'vuex';
 
 export default {
     data() {
         return {
             showPassword: false,
-            userData: {
+            credentials: {
                 email: '',
                 password: ''
             },
@@ -45,19 +45,18 @@ export default {
         };
     },
     methods: {
+        ...mapActions(['login']),
         async loginRequest() {
             try {
-                const { data } = await axios.post('auth/login', this.userData);
+                await this.login(this.credentials);
 
-                if (data) {
-                    this.$router.push({ name: 'dashboard' });
-
-                    // todo with vuex
-                    // localStorage.setItem('token', data.token);
-                    // localStorage.setItem('role', data.user.role);
-                }
+                this.$router.push({ name: 'dashboard' });
             } catch (error) {
-                this.error = 'Wrong username or password';
+                if (error.response) {
+                    this.error = error.response.status === 401 && 'Wrong username or password';
+                }
+
+                console.error(error);
             }
         }
     }

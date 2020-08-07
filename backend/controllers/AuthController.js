@@ -1,30 +1,12 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const HTTP = require('http-status-codes');
 
-const User = require('../models/User');
+const config = require('../config');
+
+const { User } = require('../models');
 
 class AuthController {
-    async create(req, res) {
-        try {
-            const { email } = req.body;
-            const user = await User.findOne({
-                where: {
-                    email
-                }
-            });
-
-            if (!user) {
-                const user = await User.create(req.body);
-
-                return res.status(201).send(user);
-            } else {
-                return res.status(400).send({ message: 'User with that email already exists' });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     async login(req, res) {
         try {
             const { email, password } = req.body;
@@ -37,16 +19,22 @@ class AuthController {
             });
 
             if (!user || !bcrypt.compareSync(password, user.password)) {
-                return res.status(401).send({ message: 'Wrong credentials' });
+                return res.status(HTTP.UNAUTHORIZED).send({ message: 'Wrong credentials' });
             }
 
             const loggedUser = await User.findOne({
                 where: {
                     email
-                }
+                },
+                include: {
+                    association: 'roles',
+                    attributes: ['name']
+                },
+                raw: true,
+                nest: true
             });
 
-            const token = jwt.sign({ ...loggedUser }, process.env.SECRET_KEY, {
+            const token = jwt.sign({ ...loggedUser }, config.app.secretKey, {
                 expiresIn: 1440
             });
 
