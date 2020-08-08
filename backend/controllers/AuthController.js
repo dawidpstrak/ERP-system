@@ -27,7 +27,7 @@ class AuthController {
                     email
                 },
                 include: {
-                    association: 'roles',
+                    association: 'role',
                     attributes: ['name']
                 },
                 raw: true,
@@ -38,7 +38,7 @@ class AuthController {
                 expiresIn: 1440
             });
 
-            return res.send({
+            return res.status(HTTP.OK).send({
                 user: loggedUser,
                 token
             });

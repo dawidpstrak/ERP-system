@@ -42,12 +42,9 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
-    methods: {
-        ...mapMutations(['logout'])
-    },
     computed: {
         ...mapGetters(['loggedUser']),
         linksByRole() {
@@ -62,7 +59,7 @@ export default {
                 { title: 'EMPLOYEE', icon: 'mdi-human', to: '/employees' }
             ];
 
-            return this.loggedUser.roles.name === 'admin' ? adminLinks : userLinks;
+            return this.loggedUser.role.name === 'admin' ? adminLinks : userLinks;
         }
     }
 };
