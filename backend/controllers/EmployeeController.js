@@ -29,6 +29,30 @@ class EmployeeController {
             console.error(error);
         }
     }
+
+    async index(req, res) {
+        try {
+            const employees = await User.findAll({
+                include: {
+                    association: 'role',
+                    attributes: ['name'],
+                    where: {
+                        name: 'user'
+                    }
+                },
+                raw: true,
+                nest: true
+            });
+
+            if (employees) {
+                return res.status(HTTP.OK).send(employees);
+            }
+
+            return res.status(HTTP.BAD_REQUEST).send({ message: 'No employees in database' });
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 module.exports = EmployeeController;

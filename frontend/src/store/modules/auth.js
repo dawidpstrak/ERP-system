@@ -15,27 +15,28 @@ const getters = {
 };
 
 const mutations = {
-    setLoggedUser(state, loggedUser) {
+    SET_LOGGED_USER(state, loggedUser) {
         localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
         state.loggedUser = loggedUser;
     },
-    setUserToken(state, token) {
+    SET_USER_TOKEN(state, token) {
         localStorage.setItem('token', JSON.stringify(token));
         state.token = token;
     },
-    logout(state) {
+    REMOVE_USER_DATA(state) {
         localStorage.removeItem('loggedUser');
         localStorage.removeItem('token');
         state.loggedUser = null;
         state.token = null;
+        state.employees = null;
     }
 };
 
 const actions = {
     async login({ commit }, credentials) {
         const { data } = await AuthenticationService.login(credentials);
-        commit('setLoggedUser', data.user);
-        commit('setUserToken', data.token);
+        commit('SET_LOGGED_USER', data.user);
+        commit('SET_USER_TOKEN', data.token);
     }
 };
 

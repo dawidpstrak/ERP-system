@@ -8,7 +8,7 @@ export const routes = [
     {
         path: '/logout',
         beforeEnter(to, from, next) {
-            store.commit('logout');
+            store.commit('REMOVE_USER_DATA');
             next({ name: 'login' });
         }
     },

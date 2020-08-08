@@ -46,10 +46,15 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = models => {
         User.belongsToMany(models.Role, {
-            as: 'roles',
+            as: 'role',
             through: models.UserRole,
             foreignKey: 'userId',
             otherKey: 'roleId'
+        });
+
+        User.hasMany(models.Contract, {
+            as: 'contracts',
+            foreignKey: 'userId'
         });
     };
 
