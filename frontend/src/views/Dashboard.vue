@@ -1,24 +1,25 @@
 <template>
-    <div v-if="loggedUser && loggedUser.role.name === 'admin'" class="admin-dashboard">
-        <EmployeesList />
-    </div>
-    <div v-else>User Dashboard Todo</div>
+    <v-container fluid class="pa-0 ma-0">
+        <v-container v-if="isAdmin" fluid class="pa-0 ma-0">
+            <EmployeesList />
+        </v-container>
+
+        <v-container v-else>User Dashboard Todo</v-container>
+    </v-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+
 import EmployeesList from '../components/EmployeesList';
 
 export default {
     components: { EmployeesList },
     computed: {
-        ...mapGetters(['loggedUser'])
+        ...mapGetters(['loggedUser']),
+        isAdmin() {
+            return this.loggedUser && this.loggedUser.role.name === 'admin';
+        }
     }
 };
 </script>
-
-<style scoped>
-.admin-dashboard {
-    width: 100%;
-}
-</style>

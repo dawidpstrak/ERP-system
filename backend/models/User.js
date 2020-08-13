@@ -12,23 +12,30 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             name: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             },
             surname: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             },
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 unique: true
             },
+            birthDate: {
+                type: DataTypes.DATEONLY,
+                allowNull: false
+            },
             password: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             }
         },
         {
             defaultScope: {
-                attributes: { exclude: ['password'] }
+                attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
             },
             hooks: {
                 beforeSave: (user, options) => {
@@ -57,6 +64,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId'
         });
     };
+
+    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate'];
 
     return User;
 };

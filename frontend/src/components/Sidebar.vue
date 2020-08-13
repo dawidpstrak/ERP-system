@@ -1,10 +1,10 @@
 <template>
     <v-card>
-        <v-navigation-drawer width="230" height="100vh" permanent>
+        <v-navigation-drawer width="200" height="100vh" permanent>
             <v-list-item>
-                <v-list-item-content>
-                    <v-list-item-title class="title padding">ERP SYSTEM</v-list-item-title>
-                    <v-list-item-subtitle v-if="loggedUser">
+                <v-list-item-content class="pa-3">
+                    <v-list-item-title class="title" align="center">ERP SYSTEM</v-list-item-title>
+                    <v-list-item-subtitle v-if="loggedUser" align="center">
                         <strong>{{ loggedUser.email }}</strong>
                     </v-list-item-subtitle>
                 </v-list-item-content>
@@ -15,24 +15,25 @@
                     v-for="link in linksByRole"
                     :key="link.title"
                     :to="link.to"
-                    class="link"
+                    align="center"
+                    class="text-decoration-none"
                 >
-                    <v-list-item link>
+                    <v-list-item>
                         <v-list-item-icon>
                             <v-icon>{{ link.icon }}</v-icon>
                         </v-list-item-icon>
-                        <v-list-item-content>
+                        <v-list-item-content class="mr-0">
                             <v-list-item-title>{{ link.title }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </router-link>
-                <router-link to="/logout" class="link">
+                <router-link to="/logout" class="text-decoration-none">
                     <v-list-item link>
                         <v-list-item-icon>
                             <v-icon>{{ 'mdi-logout-variant' }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title>LOGOUT</v-list-item-title>
+                            <v-list-item-title align="center">LOGOUT</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </router-link>
@@ -66,10 +67,10 @@ export default {
 </script>
 
 <style scoped>
-.padding {
-    padding: 10px 0;
+.router-link-active {
+    background-color: #2b80d5;
 }
-.link {
-    text-decoration: none;
+.v-list-item {
+    background-color: inherit;
 }
 </style>
