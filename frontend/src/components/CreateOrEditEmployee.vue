@@ -80,7 +80,7 @@
                 class="ml-10"
                 depressed
                 color="error"
-                @click="deleteEmployee(userData.id)"
+                @click="deleteEmployee(userData)"
             >Dismiss</v-btn>
         </v-form>
     </div>
@@ -128,12 +128,15 @@ export default {
                 surname: '',
                 email: '',
                 password: '',
-                role: 'user',
+                roles: [
+                    {
+                        name: 'user'
+                    }
+                ],
                 birthDate: ''
             },
             repeatPassword: '',
             showPassword: false,
-            updatableFields: ['name', 'surname', 'email', 'birthDate'],
             validations: {
                 name: { required, minLength: minLength(3), maxLength: maxLength(20) },
                 surname: { required, minLength: minLength(3), maxLength: maxLength(20) },
@@ -239,7 +242,11 @@ export default {
                 surname: '',
                 email: '',
                 password: '',
-                role: 'user',
+                roles: [
+                    {
+                        name: 'user'
+                    }
+                ],
                 birthDate: ''
             };
             this.repeatPassword = '';

@@ -11,7 +11,8 @@ const state = () => initialState();
 
 const getters = {
     loggedUser: state => state.loggedUser,
-    getToken: state => state.token
+    getToken: state => state.token,
+    isAdmin: state => state.loggedUser.roles.some(role => role.name === 'admin')
 };
 
 const mutations = {
@@ -35,7 +36,8 @@ const mutations = {
 const actions = {
     async login({ commit }, credentials) {
         const { data } = await AuthenticationService.login(credentials);
-        commit('SET_LOGGED_USER', data.user);
+
+        commit('SET_LOGGED_USER', data.loggedUser);
         commit('SET_USER_TOKEN', data.token);
     }
 };

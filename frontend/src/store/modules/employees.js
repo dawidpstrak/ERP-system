@@ -18,20 +18,21 @@ const mutations = {
 
 const actions = {
     async fetchEmployees({ commit }) {
-        const { data } = await axios.get('employees');
+        const { data } = await axios.get('/users');
+
         commit('SET_EMPLOYEES', data);
     },
     async saveEmployee({ dispatch }, employee) {
         if (employee.id) {
-            await axios.put(`/employees/${employee.id}`, employee);
+            await axios.put(`/users/${employee.id}`, employee);
         } else {
-            await axios.post('/employees', employee);
+            await axios.post('/users', employee);
         }
 
         dispatch('fetchEmployees');
     },
-    async deleteEmployee({ dispatch }, id) {
-        await axios.delete(`/employees/${id}`);
+    async deleteEmployee({ dispatch }, employee) {
+        await axios.delete(`/users/${employee.id}`, { data: { employee } });
 
         dispatch('fetchEmployees');
     }

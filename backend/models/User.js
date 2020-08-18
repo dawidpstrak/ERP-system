@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = models => {
         User.belongsToMany(models.Role, {
-            as: 'role',
+            as: 'roles',
             through: models.UserRole,
             foreignKey: 'userId',
             otherKey: 'roleId'
@@ -63,6 +63,14 @@ module.exports = (sequelize, DataTypes) => {
             as: 'contracts',
             foreignKey: 'userId'
         });
+    };
+
+    User.prototype.isAdmin = async function () {
+        const roles = await this.getRoles();
+
+        const { Role } = require('./');
+
+        return roles.some(role => role.name === Role.ADMIN);
     };
 
     User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate'];

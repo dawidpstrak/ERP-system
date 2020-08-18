@@ -47,7 +47,7 @@ import { mapGetters } from 'vuex';
 
 export default {
     computed: {
-        ...mapGetters(['loggedUser']),
+        ...mapGetters(['loggedUser', 'isAdmin']),
         linksByRole() {
             if (!this.loggedUser) {
                 return [];
@@ -60,7 +60,7 @@ export default {
                 { title: 'EMPLOYEE', icon: 'mdi-human', to: '/employees' }
             ];
 
-            return this.loggedUser.role.name === 'admin' ? adminLinks : userLinks;
+            return this.isAdmin ? adminLinks : userLinks;
         }
     }
 };

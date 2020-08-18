@@ -1,45 +1,35 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const HTTP = require('http-status-codes');
 
 const config = require('../config');
 
-const { User } = require('../models');
-
 class AuthController {
+    /**
+     * @param { UserRepository } userRepository
+     * @param { LoginHandler } loginHandler
+     */
+
+    constructor(userRepository, loginHandler) {
+        this.userRepository = userRepository;
+        this.loginHandler = loginHandler;
+    }
+
     async login(req, res) {
         try {
             const { email, password } = req.body;
 
-            const user = await User.findOne({
-                attributes: ['password'],
-                where: {
-                    email
-                }
-            });
+            const loggedUser = await this.loginHandler.handle(email, password);
 
-            if (!user || !bcrypt.compareSync(password, user.password)) {
+            if (!loggedUser) {
                 return res.status(HTTP.UNAUTHORIZED).send({ message: 'Wrong credentials' });
             }
 
-            const loggedUser = await User.findOne({
-                where: {
-                    email
-                },
-                include: {
-                    association: 'role',
-                    attributes: ['name']
-                },
-                raw: true,
-                nest: true
-            });
-
-            const token = jwt.sign({ ...loggedUser }, config.app.secretKey, {
+            const token = jwt.sign({ loggedUser }, config.app.secretKey, {
                 expiresIn: 1440
             });
 
             return res.status(HTTP.OK).send({
-                user: loggedUser,
+                loggedUser,
                 token
             });
         } catch (error) {

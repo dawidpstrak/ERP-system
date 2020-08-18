@@ -1,24 +1,10 @@
 const { body } = require('express-validator');
 
-const { User } = require('../models');
+const di = req => {
+    return req.app.get('di');
+};
 
 const update = [
-    body(['name'])
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage('Should not be empty')
-        .isLength({ min: 3, max: 20 })
-        .withMessage('Invalid name format. Min length is 3 chars. Max length is 20 chars'),
-
-    body(['surname'])
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage('Should not be empty')
-        .isLength({ min: 3, max: 20 })
-        .withMessage('Invalid surname format. Min length is 3 chars. Max length is 20 chars'),
-
     body(['email'])
         .trim()
         .not()
@@ -31,39 +17,36 @@ const update = [
         .custom(async (email, { req }) => {
             const { id } = req.body;
 
-            const user = await User.findOne({
-                where: {
-                    email
-                }
-            });
+            const userRepository = di(req).get('repositories.user');
+
+            const user = await userRepository.findByEmail(email);
 
             if (user && id !== user.id) {
                 return Promise.reject('Email address already exists!');
             }
 
-            return Promise.resolve('This email is free to use');
+            return Promise.resolve('Email adress available');
         }),
 
-    body('birthDate')
-        .trim()
+    body(['roles'])
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
-        .isDate()
-        .withMessage('Date has invalid format!')
+        .bail()
+        .custom(async (roles, { req }) => {
+            const roleRepository = di(req).get('repositories.role');
+
+            const areAllRolesValid = (await roleRepository.getByNames(roles)).length === roles.length;
+
+            if (areAllRolesValid) {
+                return Promise.resolve('All roles has valid names');
+            }
+
+            return Promise.reject('Some role not exist');
+        })
 ];
 
 const store = [...update];
-
-store.push(
-    body('password')
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage('Should not be empty')
-        .isLength({ min: 6, max: 32 })
-        .withMessage('Password must be 6-32 characters in length')
-);
 
 module.exports = {
     update,

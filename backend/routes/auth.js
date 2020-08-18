@@ -1,10 +1,10 @@
 const express = require('express');
-const auth = express.Router();
+const router = express.Router();
 
-const AuthController = require('../controllers/AuthController.js');
+module.exports = di => {
+    const authController = di.get('controllers.auth');
 
-const authController = new AuthController();
+    router.post('/login', (...args) => authController.login(...args));
 
-auth.post('/login', (...args) => authController.login(...args));
-
-module.exports = auth;
+    return router;
+};

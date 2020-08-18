@@ -1,6 +1,6 @@
 <template>
     <v-container fluid class="pa-0 ma-0">
-        <v-container v-if="isAdmin" fluid class="pa-0 ma-0">
+        <v-container v-if="loggedUser && isAdmin" fluid class="pa-0 ma-0">
             <EmployeesList />
         </v-container>
 
@@ -16,10 +16,7 @@ import EmployeesList from '../components/EmployeesList';
 export default {
     components: { EmployeesList },
     computed: {
-        ...mapGetters(['loggedUser']),
-        isAdmin() {
-            return this.loggedUser && this.loggedUser.role.name === 'admin';
-        }
+        ...mapGetters(['loggedUser', 'isAdmin'])
     }
 };
 </script>
