@@ -28,12 +28,14 @@ class AuthController {
                 expiresIn: 1440
             });
 
-            return res.status(HTTP.OK).send({
+            return res.send({
                 loggedUser,
                 token
             });
         } catch (error) {
             console.error(error);
+
+            return res.status(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -6,8 +6,8 @@ class UserRepository extends AbstractRepository {
         return User;
     }
 
-    async getAll() {
-        return await this.model.findAll({
+    getAll() {
+        return this.model.findAll({
             include: {
                 association: 'roles',
                 attributes: ['name'],
@@ -18,8 +18,8 @@ class UserRepository extends AbstractRepository {
         });
     }
 
-    async findByEmail(email, options = {}) {
-        return await this.model.findOne({
+    findByEmail(email, options = {}) {
+        return this.model.findOne({
             where: {
                 email
             },
@@ -27,8 +27,8 @@ class UserRepository extends AbstractRepository {
         });
     }
 
-    async getByIdWithAssociation(id, options = {}) {
-        return await this.model.findByPk(id, {
+    getByIdWithAssociation(id, options = {}) {
+        return this.model.findByPk(id, {
             include: {
                 association: 'roles',
                 attributes: ['name']

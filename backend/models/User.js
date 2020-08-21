@@ -61,7 +61,9 @@ module.exports = (sequelize, DataTypes) => {
 
         User.hasMany(models.Contract, {
             as: 'contracts',
-            foreignKey: 'userId'
+            foreignKey: 'userId',
+            onDelete: 'cascade',
+            hooks: 'true'
         });
     };
 

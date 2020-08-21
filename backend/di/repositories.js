@@ -5,6 +5,9 @@ module.exports = {
         },
         'repositories.role': {
             class: '../repositories/RoleRepository'
+        },
+        'repositories.contract': {
+            class: '../repositories/ContractRepository'
         }
     }
 };

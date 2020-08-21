@@ -3,7 +3,7 @@ import store from '../store/store';
 export const routes = [
     { path: '/', name: 'login', component: () => import('@/views/Login') },
     { path: '/dashboard', name: 'dashboard', component: () => import('@/views/Dashboard') },
-    { path: '/vacations', name: 'vacation', component: () => import('@/views/Vacation') },
+    { path: '/contracts', name: 'contracts', component: () => import('@/views/Contracts') },
     { path: '/employees', name: 'employee', component: () => import('@/views/Employee') },
     {
         path: '/logout',
@@ -12,5 +12,5 @@ export const routes = [
             next({ name: 'login' });
         }
     },
-    { path: '*', redirect: '/' }
+    { path: '*', redirect: '/dashboard' }
 ];

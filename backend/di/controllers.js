@@ -7,6 +7,10 @@ module.exports = {
         'controllers.auth': {
             class: '../controllers/AuthController',
             arguments: ['@repositories.user', '@services.auth.loginHandler']
+        },
+        'controllers.contract': {
+            class: '../controllers/ContractController',
+            arguments: ['@repositories.user', '@repositories.contract', '@repositories.role']
         }
     }
 };

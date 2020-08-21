@@ -56,7 +56,7 @@ export default {
             const userLinks = [{ title: 'DASHBOARD', icon: 'mdi-view-dashboard-outline', to: '/dashboard' }];
             const adminLinks = [
                 ...userLinks,
-                { title: 'VACATIONS', icon: 'mdi-palm-tree ', to: '/vacations' },
+                { title: 'CONTRACTS', icon: 'mdi-account-clock-outline ', to: '/contracts' },
                 { title: 'EMPLOYEE', icon: 'mdi-human', to: '/employees' }
             ];
 

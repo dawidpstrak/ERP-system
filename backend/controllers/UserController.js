@@ -2,7 +2,7 @@ const HTTP = require('http-status-codes');
 
 const { User } = require('../models');
 
-class EmployeeController {
+class UserController {
     /**
      * @param { UserRepository } userRepository
      * @param { RoleRepository } roleRepository
@@ -17,9 +17,11 @@ class EmployeeController {
         try {
             const employees = await this.userRepository.getAll();
 
-            return res.status(HTTP.OK).send(employees);
+            return res.send(employees);
         } catch (error) {
             console.error(error);
+
+            return res.status(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -36,6 +38,8 @@ class EmployeeController {
             return res.status(HTTP.CREATED).send(newUser);
         } catch (error) {
             console.error(error);
+
+            return res.status(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -53,9 +57,11 @@ class EmployeeController {
 
             const updatedUser = await this.userRepository.findByPk(id);
 
-            return res.status(HTTP.OK).send(updatedUser);
+            return res.send(updatedUser);
         } catch (error) {
             console.error(error);
+
+            return res.status(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -78,8 +84,10 @@ class EmployeeController {
             return res.sendStatus(HTTP.NO_CONTENT);
         } catch (error) {
             console.error(error);
+
+            return res.status(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 }
 
-module.exports = EmployeeController;
+module.exports = UserController;

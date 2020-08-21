@@ -28,18 +28,19 @@ module.exports = (sequelize, DataTypes) => {
             },
             duration: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 3
+                allowNull: false
             },
             status: {
                 type: DataTypes.STRING,
-                allowNull: false,
-                defaultValue: 'active'
+                allowNull: false
+            },
+            vacationsPerYear: {
+                type: DataTypes.INTEGER,
+                allowNull: false
             },
             daysOff: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 20
+                allowNull: false
             }
         },
         {
@@ -52,6 +53,8 @@ module.exports = (sequelize, DataTypes) => {
             as: 'user'
         });
     };
+
+    Contract.UPDATABLE_FIELDS = ['startDate', 'endDate', 'duration', 'status', 'vacationsPerYear', 'daysOff'];
 
     return Contract;
 };

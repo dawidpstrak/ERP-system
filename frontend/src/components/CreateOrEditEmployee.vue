@@ -2,7 +2,7 @@
     <div class="overlay">
         <v-form class="pa-10 white col-4" @submit.prevent="submit">
             <button class="exit-btn" @click="onClose">
-                <v-icon>{{ 'mdi-alpha-x-circle-outline' }}</v-icon>
+                <v-icon>{{ 'mdi-location-exit' }}</v-icon>
             </button>
 
             <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
@@ -66,6 +66,8 @@
                         :value="userData.birthDate"
                         readonly
                         v-on="on"
+                        @input="$v.userData.birthDate.$touch()"
+                        @blur="$v.userData.birthDate.$touch()"
                     />
                 </template>
                 <v-date-picker v-model="userData.birthDate" no-title />
@@ -75,13 +77,9 @@
 
             <v-btn v-if="isCreateModal()" @click="reset">reset</v-btn>
 
-            <v-btn
-                v-if="!isCreateModal()"
-                class="ml-10"
-                depressed
-                color="error"
-                @click="deleteEmployee(userData)"
-            >Dismiss</v-btn>
+            <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="deleteEmployee(userData)"
+                >Dismiss</v-btn
+            >
         </v-form>
     </div>
 </template>
@@ -112,7 +110,7 @@ export default {
                 maxLength: maxLength(32)
             };
             validations.repeatPassword = {
-                sameAsPassword: sameAs(function () {
+                sameAsPassword: sameAs(function() {
                     return this.userData.password;
                 })
             };
