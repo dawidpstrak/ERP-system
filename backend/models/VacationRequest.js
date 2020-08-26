@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const Contract = sequelize.define(
-        'Contract',
+    const VacationRequest = sequelize.define(
+        'VacationRequest',
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -14,9 +14,14 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 onDelete: 'cascade',
                 references: {
-                    model: 'User',
+                    model: 'user',
                     key: 'id'
                 }
+            },
+            status: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                defaultValue: 'pending'
             },
             startDate: {
                 type: DataTypes.DATEONLY,
@@ -26,36 +31,23 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATEONLY,
                 allowNull: false
             },
-            duration: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            status: {
-                type: DataTypes.STRING,
-                defaultValue: 'active',
-                allowNull: false
-            },
-            vacationsPerYear: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            availableDaysOff: {
+            requestedDaysOff: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
         },
         {
-            tableName: 'Contracts'
+            tableName: 'VacationRequests'
         }
     );
 
-    Contract.associate = models => {
-        Contract.belongsTo(models.User, {
+    VacationRequest.associate = models => {
+        VacationRequest.belongsTo(models.User, {
             as: 'user'
         });
     };
 
-    Contract.UPDATABLE_FIELDS = ['startDate', 'endDate', 'duration', 'status', 'vacationsPerYear', 'availableDaysOff'];
+    VacationRequest.UPDATABLE_FIELDS = ['startDate', 'endDate', 'requestedDaysOff'];
 
-    return Contract;
+    return VacationRequest;
 };

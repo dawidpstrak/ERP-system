@@ -25,7 +25,7 @@ class AuthController {
             }
 
             const token = jwt.sign({ loggedUser }, config.app.secretKey, {
-                expiresIn: 1440
+                expiresIn: '30m'
             });
 
             return res.send({
@@ -35,7 +35,7 @@ class AuthController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 }

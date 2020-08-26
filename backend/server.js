@@ -9,7 +9,9 @@ const di = require('./di');
 app.set('di', di);
 
 app.use(bodyParser.json());
+
 app.use(cors());
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const router = require('./routes')(di);

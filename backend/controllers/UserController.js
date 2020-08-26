@@ -21,7 +21,7 @@ class UserController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -39,7 +39,7 @@ class UserController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,31 +61,27 @@ class UserController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
     async delete(req, res) {
         try {
-            const { id, roles } = req.body.employee;
+            const { id } = req.body.employee;
 
-            const user = await this.userRepository.getByIdWithAssociation(id);
+            const user = await this.userRepository.findByPk(id);
 
-            const userRoles = await this.roleRepository.getByNames(roles);
+            if (user) {
+                await user.removeRoles(await user.getRoles());
 
-            if (!user) {
-                return res.status(HTTP.NO_CONTENT);
+                await user.destroy();
             }
-
-            await user.removeRoles(userRoles);
-
-            await user.destroy();
 
             return res.sendStatus(HTTP.NO_CONTENT);
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 }

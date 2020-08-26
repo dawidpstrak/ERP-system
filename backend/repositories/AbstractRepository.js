@@ -6,6 +6,28 @@ class AbstractRepository {
     findByPk(Pk) {
         return this.model.findByPk(Pk);
     }
+
+    findOneById(id, options) {
+        return this.model.findOne({
+            where: {
+                id
+            },
+            ...options
+        });
+    }
+
+    getAll() {
+        this.modal.findAll();
+    }
+
+    getAllByUser(userId, options = {}) {
+        return this.model.findAll({
+            where: {
+                userId
+            },
+            ...options
+        });
+    }
 }
 
 module.exports = AbstractRepository;

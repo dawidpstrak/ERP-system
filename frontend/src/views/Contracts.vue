@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-container class="d-flex justify-center pa-3">
-            <v-btn class="ma-2" tile outlined color="success" @click="openModal('createContract')">
+            <v-btn class="ma-2" tile outlined color="success" @click="openModal()">
                 <v-icon left>mdi-plus</v-icon>contract
             </v-btn>
         </v-container>
@@ -13,15 +13,10 @@
             :mobile-breakpoint="990"
             :footer-props="footerProps"
             class="elevation-1"
-            @click:row="openModal('editContract', $event)"
+            @click:row="openModal($event)"
         />
 
-        <Modal
-            v-if="modal.show"
-            :modalType="modal.type"
-            :editData="modal.editData"
-            @closeModal="closeModal"
-        />
+        <CreateOrEditContract v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
     </v-container>
 </template>
 
@@ -31,7 +26,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
-        Modal: CreateOrEditContract
+        CreateOrEditContract
     },
     data() {
         return {
@@ -41,16 +36,13 @@ export default {
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                 { text: 'Duration', align: 'center', value: 'duration', sortable: false },
-                { text: 'Vacation days left', align: 'center', value: 'daysOff', sortable: false }
+                { text: 'Available days off', align: 'center', value: 'availableDaysOff', sortable: false }
             ],
             footerProps: {
                 itemsPerPageText: 'Contracts per page'
             },
-            modal: {
-                type: '',
-                editData: {},
-                show: false
-            }
+            showModal: false,
+            selectedItem: null
         };
     },
     computed: {
@@ -58,19 +50,17 @@ export default {
     },
     methods: {
         ...mapActions(['fetchContracts']),
-        openModal(modalType, editData) {
-            this.modal.type = modalType;
-            this.modal.editData = editData;
-            this.modal.show = true;
+        openModal(selectedItem) {
+            this.showModal = true;
+            this.selectedItem = selectedItem;
         },
         closeModal() {
-            this.modal.type = '';
-            this.editData = {};
-            this.modal.show = false;
+            this.showModal = false;
+            this.selectedItem = null;
         }
     },
-    async created() {
-        await this.fetchContracts();
+    created() {
+        this.fetchContracts();
     }
 };
 </script>

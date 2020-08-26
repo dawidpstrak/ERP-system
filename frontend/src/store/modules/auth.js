@@ -2,8 +2,7 @@ import AuthenticationService from '@/services/AuthenticationService';
 
 const initialState = () => {
     return {
-        loggedUser: JSON.parse(localStorage.getItem('loggedUser')),
-        token: JSON.parse(localStorage.getItem('token'))
+        loggedUser: JSON.parse(localStorage.getItem('loggedUser'))
     };
 };
 
@@ -11,7 +10,6 @@ const state = () => initialState();
 
 const getters = {
     loggedUser: state => state.loggedUser,
-    getToken: state => state.token,
     isAdmin: state => state.loggedUser.roles.some(role => role.name === 'admin')
 };
 
@@ -20,16 +18,15 @@ const mutations = {
         localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
         state.loggedUser = loggedUser;
     },
+
     SET_USER_TOKEN(state, token) {
-        localStorage.setItem('token', JSON.stringify(token));
-        state.token = token;
+        localStorage.setItem('token', token);
     },
+
     REMOVE_USER_DATA(state) {
         localStorage.removeItem('loggedUser');
         localStorage.removeItem('token');
         state.loggedUser = null;
-        state.token = null;
-        state.employees = null;
     }
 };
 

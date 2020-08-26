@@ -8,53 +8,53 @@
             <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
 
             <v-text-field
-                v-model="userData.name"
+                v-model="formData.name"
                 :error-messages="nameErrors"
                 :counter="20"
                 label="Name"
-                @input="$v.userData.name.$touch()"
-                @blur="$v.userData.name.$touch()"
+                @input="$v.formData.name.$touch()"
+                @blur="$v.formData.name.$touch()"
             />
 
             <v-text-field
-                v-model="userData.surname"
+                v-model="formData.surname"
                 :error-messages="surnameErrors"
                 :counter="20"
                 label="Surname"
-                @input="$v.userData.surname.$touch()"
-                @blur="$v.userData.surname.$touch()"
+                @input="$v.formData.surname.$touch()"
+                @blur="$v.formData.surname.$touch()"
             />
 
             <v-text-field
-                v-model="userData.email"
+                v-model="formData.email"
                 :error-messages="emailErrors"
                 label="Email"
-                @input="$v.userData.email.$touch()"
-                @blur="$v.userData.email.$touch()"
+                @input="$v.formData.email.$touch()"
+                @blur="$v.formData.email.$touch()"
             />
 
             <v-text-field
                 v-if="isCreateModal()"
-                v-model="userData.password"
+                v-model="formData.password"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :error-messages="passwordErrors"
                 :type="showPassword ? 'text' : 'password'"
                 label="Password"
                 @click:append="showPassword = !showPassword"
-                @input="$v.userData.password.$touch()"
-                @blur="$v.userData.password.$touch()"
+                @input="$v.formData.password.$touch()"
+                @blur="$v.formData.password.$touch()"
             />
 
             <v-text-field
                 v-if="isCreateModal()"
-                v-model="repeatPassword"
+                v-model="formData.repeatPassword"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :error-messages="repeatPasswordErrors"
                 :type="showPassword ? 'text' : 'password'"
                 label="Repeat password"
                 @click:append="showPassword = !showPassword"
-                @input="$v.repeatPassword.$touch()"
-                @blur="$v.repeatPassword.$touch()"
+                @input="$v.formData.repeatPassword.$touch()"
+                @blur="$v.formData.repeatPassword.$touch()"
             />
 
             <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
@@ -63,23 +63,27 @@
                         class="mb-2"
                         label="Birth Date"
                         :error-messages="birthDateErrors"
-                        :value="userData.birthDate"
+                        :value="formData.birthDate"
                         readonly
                         v-on="on"
-                        @input="$v.userData.birthDate.$touch()"
-                        @blur="$v.userData.birthDate.$touch()"
+                        @input="$v.formData.birthDate.$touch()"
+                        @blur="$v.formData.birthDate.$touch()"
                     />
                 </template>
-                <v-date-picker v-model="userData.birthDate" no-title />
+                <v-date-picker v-model="formData.birthDate" no-title />
             </v-menu>
 
             <v-btn class="mr-4" type="submit">submit</v-btn>
 
-            <v-btn v-if="isCreateModal()" @click="reset">reset</v-btn>
+            <v-btn v-if="isCreateModal()" @click="resetForm">reset</v-btn>
 
-            <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="deleteEmployee(userData)"
-                >Dismiss</v-btn
-            >
+            <v-btn
+                v-if="!isCreateModal()"
+                class="ml-10"
+                depressed
+                color="error"
+                @click="deleteEmployee(formData)"
+            >Dismiss</v-btn>
         </v-form>
     </div>
 </template>
@@ -89,29 +93,43 @@ import { mapActions } from 'vuex';
 import { validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, sameAs, email } from 'vuelidate/lib/validators';
 
+const defaultFormData = {
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
+    repeatPassword: '',
+    roles: [
+        {
+            name: 'user'
+        }
+    ],
+    birthDate: ''
+};
+
 export default {
     props: {
-        modalType: String,
-        editData: Object
+        selectedItem: Object
     },
+
     mixins: [validationMixin],
 
     validations() {
         const validations = {
-            userData: {
+            formData: {
                 ...this.validations
             }
         };
 
         if (this.isCreateModal()) {
-            validations.userData.password = {
+            validations.formData.password = {
                 required,
                 minLength: minLength(6),
                 maxLength: maxLength(32)
             };
-            validations.repeatPassword = {
-                sameAsPassword: sameAs(function() {
-                    return this.userData.password;
+            validations.formData.repeatPassword = {
+                sameAsPassword: sameAs(function () {
+                    return this.formData.password;
                 })
             };
         }
@@ -121,19 +139,8 @@ export default {
 
     data() {
         return {
-            userData: {
-                name: '',
-                surname: '',
-                email: '',
-                password: '',
-                roles: [
-                    {
-                        name: 'user'
-                    }
-                ],
-                birthDate: ''
-            },
-            repeatPassword: '',
+            formData: { ...defaultFormData },
+
             showPassword: false,
             validations: {
                 name: { required, minLength: minLength(3), maxLength: maxLength(20) },
@@ -148,73 +155,73 @@ export default {
         nameErrors() {
             const errors = [];
 
-            if (!this.$v.userData.name.$dirty) {
+            if (!this.$v.formData.name.$dirty) {
                 return errors;
             }
 
-            !this.$v.userData.name.minLength && errors.push('Name must be at least 3 characters long');
-            !this.$v.userData.name.maxLength && errors.push('Name must be at most 20 characters long');
-            !this.$v.userData.name.required && errors.push('Name is required.');
+            !this.$v.formData.name.minLength && errors.push('Name must be at least 3 characters long');
+            !this.$v.formData.name.maxLength && errors.push('Name must be at most 20 characters long');
+            !this.$v.formData.name.required && errors.push('Name is required.');
 
             return errors;
         },
         surnameErrors() {
             const errors = [];
 
-            if (!this.$v.userData.surname.$dirty) {
+            if (!this.$v.formData.surname.$dirty) {
                 return errors;
             }
 
-            !this.$v.userData.surname.minLength && errors.push('Surname must be at least 3 characters long');
-            !this.$v.userData.surname.maxLength && errors.push('Surame must be at most 20 characters long');
-            !this.$v.userData.surname.required && errors.push('Surname is required.');
+            !this.$v.formData.surname.minLength && errors.push('Surname must be at least 3 characters long');
+            !this.$v.formData.surname.maxLength && errors.push('Surame must be at most 20 characters long');
+            !this.$v.formData.surname.required && errors.push('Surname is required.');
 
             return errors;
         },
         emailErrors() {
             const errors = [];
 
-            if (!this.$v.userData.email.$dirty) {
+            if (!this.$v.formData.email.$dirty) {
                 return errors;
             }
 
-            !this.$v.userData.email.email && errors.push('Must be valid e-mail');
-            !this.$v.userData.email.required && errors.push('E-mail is required');
+            !this.$v.formData.email.email && errors.push('Must be valid e-mail');
+            !this.$v.formData.email.required && errors.push('E-mail is required');
 
             return errors;
         },
         passwordErrors() {
             const errors = [];
 
-            if (!this.$v.userData.password.$dirty) {
+            if (!this.$v.formData.password.$dirty) {
                 return errors;
             }
 
-            !this.$v.userData.password.minLength && errors.push('Password must contains min 6 characters');
-            !this.$v.userData.password.maxLength && errors.push('Password must contains max 32 characters');
-            !this.$v.userData.password.required && errors.push('Password are required');
+            !this.$v.formData.password.minLength && errors.push('Password must contains min 6 characters');
+            !this.$v.formData.password.maxLength && errors.push('Password must contains max 32 characters');
+            !this.$v.formData.password.required && errors.push('Password are required');
 
             return errors;
         },
         repeatPasswordErrors() {
             const errors = [];
 
-            if (!this.$v.repeatPassword.$dirty) {
+            if (!this.$v.formData.repeatPassword.$dirty) {
                 return errors;
             }
 
-            !this.$v.repeatPassword.sameAsPassword && errors.push('Passwords are not equal');
+            !this.$v.formData.repeatPassword.sameAsPassword && errors.push('Passwords are not equal');
 
             return errors;
         },
         birthDateErrors() {
             const errors = [];
 
-            if (!this.$v.userData.birthDate.$dirty) {
+            if (!this.$v.formData.birthDate.$dirty) {
                 return errors;
             }
 
-            !this.$v.userData.birthDate.required && errors.push('Birth date is required.');
+            !this.$v.formData.birthDate.required && errors.push('Birth date is required.');
 
             return errors;
         }
@@ -222,45 +229,38 @@ export default {
 
     methods: {
         ...mapActions(['saveEmployee', 'deleteEmployee']),
-        async submit() {
+        submit() {
             this.$v.$touch();
 
             if (!this.$v.$invalid) {
                 this.onClose();
-                await this.saveEmployee(this.userData);
+                this.saveEmployee(this.formData);
             }
         },
-        fillForm() {
-            this.userData = { ...this.editData };
-        },
-        reset() {
-            this.$v.$reset();
-            this.userData = {
-                name: '',
-                surname: '',
-                email: '',
-                password: '',
-                roles: [
-                    {
-                        name: 'user'
-                    }
-                ],
-                birthDate: ''
-            };
-            this.repeatPassword = '';
-        },
-        isCreateModal() {
-            return this.modalType === 'createEmployee';
-        },
+
         formTitle() {
             return this.isCreateModal() ? 'New employee' : 'Edit employee';
         },
+
         onClose() {
             this.$emit('closeModal');
+        },
+
+        resetForm() {
+            this.formData = { ...defaultFormData };
+        },
+
+        setEditData() {
+            this.formData = { ...this.selectedItem };
+        },
+
+        isCreateModal() {
+            return !this.selectedItem;
         }
     },
-    beforeMount() {
-        this.isCreateModal() ? this.reset() : this.fillForm();
+
+    created() {
+        !this.isCreateModal() && this.setEditData();
     }
 };
 </script>

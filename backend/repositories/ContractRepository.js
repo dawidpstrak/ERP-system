@@ -1,23 +1,23 @@
 const AbstractRepository = require('./AbstractRepository');
 const { Contract } = require('../models');
 const { Op } = require('sequelize');
-const contract = require('../validators/contract');
 
 class ContractRepository extends AbstractRepository {
     get model() {
         return Contract;
     }
 
-    getAll() {
+    getAll(options = {}) {
         return this.model.findAll({
             include: {
                 association: 'user',
                 attributes: ['name', 'surname', 'email']
-            }
+            },
+            ...options
         });
     }
 
-    findAllByUserInTimeInterval(startDate, endDate, userId, contractId = null) {
+    findAllByUserInTimeInterval(newContractStartDate, newContractEndDate, userId, contractId = null) {
         return this.model.findAll({
             where: {
                 userId,
@@ -26,11 +26,19 @@ class ContractRepository extends AbstractRepository {
                 },
                 [Op.or]: {
                     startDate: {
-                        [Op.between]: [startDate, endDate]
+                        [Op.between]: [newContractStartDate, newContractEndDate]
                     },
 
                     endDate: {
-                        [Op.between]: [startDate, endDate]
+                        [Op.between]: [newContractStartDate, newContractEndDate]
+                    },
+                    [Op.and]: {
+                        startDate: {
+                            [Op.lte]: newContractStartDate
+                        },
+                        endDate: {
+                            [Op.gte]: newContractEndDate
+                        }
                     }
                 }
             }

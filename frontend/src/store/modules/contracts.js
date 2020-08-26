@@ -22,15 +22,13 @@ const actions = {
 
         commit('SET_CONTRACTS', data);
     },
+
     async saveContract({ dispatch }, contract) {
-        if (contract.id) {
-            await axios.put(`/contracts/${contract.id}`, contract);
-        } else {
-            await axios.post('/contracts', contract);
-        }
+        contract.id ? await axios.put(`/contracts/${contract.id}`, contract) : await axios.post('/contracts', contract);
 
         dispatch('fetchContracts');
     },
+
     async deleteContract({ dispatch }, id) {
         await axios.delete(`/contracts/${id}`);
 

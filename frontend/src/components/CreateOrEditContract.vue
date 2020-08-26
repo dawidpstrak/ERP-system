@@ -8,7 +8,6 @@
             <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
 
             <v-text-field
-                v-if="isCreateModal()"
                 v-model="contract.email"
                 :error-messages="emailErrors"
                 label="Employee email"
@@ -54,7 +53,7 @@
             <v-container>
                 <v-btn class="mr-4" type="submit">submit</v-btn>
 
-                <v-btn v-if="isCreateModal()" @click="reset">reset</v-btn>
+                <v-btn v-if="isCreateModal()" @click="resetForm">reset</v-btn>
 
                 <v-btn
                     v-if="!isCreateModal()"
@@ -69,14 +68,24 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 import { validationMixin } from 'vuelidate';
-import { required, requiredIf, email } from 'vuelidate/lib/validators';
+import { required, email } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
+
+const defaultFormData = {
+    email: '',
+    startDate: '',
+    endDate: '',
+    duration: null,
+    vacationsPerYear: null,
+    availableDaysOff: null
+};
 
 export default {
     props: {
-        modalType: String,
-        editData: Object
+        selectedItem: Object
     },
 
     mixins: [validationMixin],
@@ -84,9 +93,7 @@ export default {
     validations: {
         contract: {
             email: {
-                required: requiredIf(function () {
-                    return this.isCreateModal();
-                }),
+                required,
                 email
             },
             startDate: { required },
@@ -94,21 +101,15 @@ export default {
             vacationsPerYear: { required }
         }
     },
+
     data() {
         return {
-            contract: {
-                email: '',
-                startDate: '',
-                endDate: '',
-                duration: null,
-                vacationsPerYear: null,
-                status: 'active',
-                daysOff: null
-            },
+            contract: { ...defaultFormData },
             durationOptions: [1, 3, 6, 12],
             vacationsPerYearOptions: [20, 26]
         };
     },
+
     computed: {
         emailErrors() {
             const errors = [];
@@ -158,55 +159,57 @@ export default {
     },
     methods: {
         ...mapActions(['saveContract', 'deleteContract']),
+
         formTitle() {
             return this.isCreateModal() ? 'New contract' : 'Edit contract';
         },
+
         onClose() {
             this.$emit('closeModal');
         },
-        isCreateModal() {
-            return this.modalType === 'createContract';
-        },
+
         calculateEndDate() {
-            const startDate = new Date(this.contract.startDate);
-            const contract = this.contract;
+            const startDate = moment(this.contract.startDate);
 
-            contract.endDate = new Date(startDate.setMonth(startDate.getMonth() + contract.duration))
-                .toISOString()
-                .split('T')[0];
-        },
-        calculateDaysOff() {
-            const contract = this.contract;
+            const endDate = startDate.add(this.contract.duration, 'M').format('YYYY-MM-DD');
 
-            contract.daysOff = Math.round((contract.vacationsPerYear / 12) * contract.duration);
+            this.contract.endDate = endDate;
         },
+
+        calculateAvailableDaysOff() {
+            this.contract.availableDaysOff = Math.round((this.contract.vacationsPerYear / 12) * this.contract.duration);
+        },
+
+        calculateAll() {
+            this.calculateEndDate();
+            this.calculateAvailableDaysOff();
+        },
+
         async submit() {
             this.$v.$touch();
 
             if (!this.$v.$invalid) {
-                this.calculateEndDate();
-                this.calculateDaysOff();
+                this.calculateAll();
 
                 await this.saveContract(this.contract);
             }
         },
-        reset() {
-            this.contract = {
-                email: '',
-                startDate: '',
-                endDate: '',
-                duration: null,
-                vacationsPerYear: null,
-                status: 'active',
-                daysOff: null
-            };
+
+        resetForm() {
+            this.contract = { ...defaultFormData };
         },
-        fillForm() {
-            this.contract = { email: this.editData.user.email, ...this.editData };
+
+        setEditData() {
+            this.contract = { email: this.selectedItem.user.email, ...this.selectedItem };
+        },
+
+        isCreateModal() {
+            return !this.selectedItem;
         }
     },
-    beforeMount() {
-        this.isCreateModal() ? this.reset() : this.fillForm();
+
+    created() {
+        !this.isCreateModal() && this.setEditData();
     }
 };
 </script>

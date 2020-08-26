@@ -1,5 +1,4 @@
 const HTTP = require('http-status-codes');
-
 const { Contract } = require('../models');
 
 class ContractController {
@@ -15,13 +14,21 @@ class ContractController {
 
     async index(req, res) {
         try {
-            const contracts = await this.contractRepository.getAll();
+            const { isAdmin, id } = req.loggedUser;
+
+            let contracts;
+
+            if (isAdmin) {
+                contracts = await this.contractRepository.getAll();
+            } else {
+                contracts = await this.contractRepository.getAllByUser(id);
+            }
 
             return res.send(contracts);
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -44,7 +51,7 @@ class ContractController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,7 +73,7 @@ class ContractController {
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -76,17 +83,15 @@ class ContractController {
 
             const contract = await this.contractRepository.findByPk(id);
 
-            if (!contract) {
-                return res.status(HTTP.NO_CONTENT);
+            if (contract) {
+                await contract.destroy();
             }
-
-            await contract.destroy();
 
             return res.sendStatus(HTTP.NO_CONTENT);
         } catch (error) {
             console.error(error);
 
-            return res.status(HTTP.INTERNAL_SERVER_ERROR);
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
         }
     }
 }

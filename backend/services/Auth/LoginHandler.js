@@ -17,7 +17,7 @@ class LoginHandler {
             return null;
         }
 
-        return this.userRepository.getByIdWithAssociation(user.id);
+        return this.userRepository.getByIdWithAssociations(user.id);
     }
 }
 

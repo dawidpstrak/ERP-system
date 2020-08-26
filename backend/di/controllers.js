@@ -11,6 +11,10 @@ module.exports = {
         'controllers.contract': {
             class: '../controllers/ContractController',
             arguments: ['@repositories.user', '@repositories.contract', '@repositories.role']
+        },
+        'controllers.vacationRequest': {
+            class: '../controllers/VacationRequestController',
+            arguments: ['@repositories.vacationRequest', '@repositories.user', '%moment']
         }
     }
 };

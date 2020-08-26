@@ -1,5 +1,6 @@
 const AbstractRepository = require('./AbstractRepository');
 const { User } = require('../models');
+const db = require('../models');
 
 class UserRepository extends AbstractRepository {
     get model() {
@@ -8,13 +9,20 @@ class UserRepository extends AbstractRepository {
 
     getAll() {
         return this.model.findAll({
-            include: {
-                association: 'roles',
-                attributes: ['name'],
-                where: {
-                    name: 'user'
+            include: [
+                {
+                    association: 'roles',
+                    attributes: ['name'],
+                    where: {
+                        name: 'user'
+                    }
+                },
+                {
+                    association: 'contracts',
+                    attributes: [[db.sequelize.fn('sum', db.sequelize.col('availableDaysOff')), 'totalDaysOff']]
                 }
-            }
+            ],
+            group: 'id'
         });
     }
 
@@ -27,12 +35,13 @@ class UserRepository extends AbstractRepository {
         });
     }
 
-    getByIdWithAssociation(id, options = {}) {
+    getByIdWithAssociations(id, options = {}) {
         return this.model.findByPk(id, {
             include: {
                 association: 'roles',
                 attributes: ['name']
             },
+
             ...options
         });
     }

@@ -8,6 +8,9 @@ module.exports = {
         },
         'repositories.contract': {
             class: '../repositories/ContractRepository'
+        },
+        'repositories.vacationRequest': {
+            class: '../repositories/VacationRequestRepository'
         }
     }
 };

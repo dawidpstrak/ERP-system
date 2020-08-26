@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             defaultScope: {
-                attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+                attributes: { exclude: ['password'] }
             },
             hooks: {
                 beforeSave: (user, options) => {
@@ -65,14 +65,13 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade',
             hooks: 'true'
         });
-    };
 
-    User.prototype.isAdmin = async function () {
-        const roles = await this.getRoles();
-
-        const { Role } = require('./');
-
-        return roles.some(role => role.name === Role.ADMIN);
+        User.hasMany(models.VacationRequest, {
+            as: 'vacationRequests',
+            foreignKey: 'userId',
+            onDelete: 'cascade',
+            hooks: 'true'
+        });
     };
 
     User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate'];
