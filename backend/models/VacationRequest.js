@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
         'VacationRequest',
         {
             id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true
+                type: DataTypes.UUID,
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             userId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 onDelete: 'cascade',
                 references: {
@@ -20,8 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             status: {
                 type: DataTypes.STRING,
-                allowNull: false,
-                defaultValue: 'pending'
+                allowNull: false
             },
             startDate: {
                 type: DataTypes.DATEONLY,
@@ -47,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    VacationRequest.UPDATABLE_FIELDS = ['startDate', 'endDate', 'requestedDaysOff'];
+    VacationRequest.UPDATABLE_FIELDS = ['startDate', 'endDate', 'status', 'requestedDaysOff'];
 
     return VacationRequest;
 };

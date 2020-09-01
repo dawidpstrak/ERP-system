@@ -21,7 +21,7 @@ class VacationRequestController {
             let vacationRequests;
 
             if (isAdmin) {
-                vacationRequests = await this.vacationRequestRepository.getAll();
+                vacationRequests = await this.vacationRequestRepository.getAllWithUser();
             } else {
                 vacationRequests = await this.vacationRequestRepository.getAllByUser(id);
             }
@@ -36,14 +36,25 @@ class VacationRequestController {
 
     async store(req, res) {
         try {
-            const { startDate, endDate } = req.body;
-            const { id: userId } = req.loggedUser;
+            const { startDate, endDate, email, status } = req.body;
+            const { id: userId, isAdmin } = req.loggedUser;
 
             const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
 
+            let user;
+
+            if (isAdmin) {
+                user = await this.userRepository.findByEmail(email);
+
+                if (!user) {
+                    return res.status(HTTP.NOT_FOUND).send({ message: 'Not found user with that email' });
+                }
+            }
+
             const newVacationRequest = await this.vacationRequestRepository.create({
                 ...req.body,
-                userId,
+                userId: isAdmin ? user.id : userId,
+                status: isAdmin ? status : 'pending',
                 requestedDaysOff
             });
 
@@ -57,7 +68,8 @@ class VacationRequestController {
 
     async update(req, res) {
         try {
-            const { id, startDate, endDate } = req.body;
+            const { id, startDate, endDate, status } = req.body;
+            const { isAdmin } = req.loggedUser;
 
             const vacationRequest = await this.vacationRequestRepository.findByPk(id);
 
@@ -68,7 +80,7 @@ class VacationRequestController {
             const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
 
             await vacationRequest.update(
-                { ...req.body, requestedDaysOff },
+                { ...req.body, status: isAdmin ? status : 'pending', requestedDaysOff },
                 { fields: VacationRequest.UPDATABLE_FIELDS }
             );
 

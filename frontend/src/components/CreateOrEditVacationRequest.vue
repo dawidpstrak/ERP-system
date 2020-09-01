@@ -7,21 +7,40 @@
 
             <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
 
+            <v-text-field
+                v-if="isAdmin && isCreateModal()"
+                v-model="formData.email"
+                :error-messages="emailErrors"
+                label="Employee email"
+                @input="$v.formData.email.$touch"
+                @blur="$v.formData.email.$touch"
+            />
+
+            <v-select
+                v-if="isAdmin"
+                v-model="formData.status"
+                label="Set request status"
+                :items="requestStatuses"
+                :error-messages="requestStatusesErrors"
+                @input="$v.formData.status.$touch"
+                @blur="$v.formData.status.$touch"
+            />
+
             <v-menu :nudge-right="40" :close-on-content-click="false" min-width="none" transition="scale-transition">
                 <template v-slot:activator="{ on }">
                     <v-text-field
                         class="mb-2"
                         label="Start date"
                         :error-messages="startDateErrors"
-                        :value="vacationRequest.startDate"
+                        :value="formData.startDate"
                         readonly
                         v-on="on"
-                        @input="$v.vacationRequest.startDate.$touch()"
-                        @blur="$v.vacationRequest.startDate.$touch()"
+                        @input="$v.formData.startDate.$touch"
+                        @blur="$v.formData.startDate.$touch"
                     />
                 </template>
 
-                <v-date-picker v-model="vacationRequest.startDate" no-title />
+                <v-date-picker v-model="formData.startDate" no-title />
             </v-menu>
 
             <v-menu :nudge-right="40" :close-on-content-click="false" min-width="none" transition="scale-transition">
@@ -30,15 +49,15 @@
                         class="mb-2"
                         label="End date"
                         :error-messages="endDateErrors"
-                        :value="vacationRequest.endDate"
+                        :value="formData.endDate"
                         readonly
                         v-on="on"
-                        @input="$v.vacationRequest.endDate.$touch()"
-                        @blur="$v.vacationRequest.endDate.$touch()"
+                        @input="$v.formData.endDate.$touch"
+                        @blur="$v.formData.endDate.$touch"
                     />
                 </template>
 
-                <v-date-picker v-model="vacationRequest.endDate" no-title />
+                <v-date-picker v-model="formData.endDate" no-title />
             </v-menu>
 
             <v-container>
@@ -49,7 +68,7 @@
                     class="ml-10"
                     depressed
                     color="error"
-                    @click="deleteVacationRequest(vacationRequest.id)"
+                    @click="deleteVacationRequest(formData.id)"
                     >Delete</v-btn
                 >
             </v-container>
@@ -61,8 +80,8 @@
 import moment from 'moment';
 
 import { validationMixin } from 'vuelidate';
-import { required } from 'vuelidate/lib/validators';
-import { mapActions } from 'vuex';
+import { required, email, requiredIf } from 'vuelidate/lib/validators';
+import { mapActions, mapGetters } from 'vuex';
 
 const mustBeAfterStartDate = (value, vm) => value > vm.startDate;
 
@@ -74,7 +93,18 @@ export default {
     mixins: [validationMixin],
 
     validations: {
-        vacationRequest: {
+        formData: {
+            email: {
+                required: requiredIf(function() {
+                    return this.isAdmin && this.isCreateModal();
+                }),
+                email
+            },
+            status: {
+                required: requiredIf(function() {
+                    return this.isAdmin;
+                })
+            },
             startDate: { required },
             endDate: {
                 required,
@@ -85,22 +115,50 @@ export default {
 
     data() {
         return {
-            vacationRequest: {
+            formData: {
+                email: '',
                 startDate: '',
                 endDate: ''
-            }
+            },
+            requestStatuses: ['active', 'pending', 'declined']
         };
     },
 
     computed: {
-        startDateErrors() {
+        ...mapGetters(['isAdmin']),
+        emailErrors() {
             const errors = [];
 
-            if (!this.$v.vacationRequest.startDate.$dirty) {
+            if (!this.$v.formData.email.$dirty) {
                 return errors;
             }
 
-            !this.$v.vacationRequest.startDate.required && errors.push('Start date is required.');
+            !this.$v.formData.email.email && errors.push('Must be valid e-mail');
+            !this.$v.formData.email.required && errors.push('E-mail is required');
+
+            return errors;
+        },
+
+        requestStatusesErrors() {
+            const errors = [];
+
+            if (!this.$v.formData.status.$dirty) {
+                return errors;
+            }
+
+            !this.$v.formData.status.required && errors.push('Request status is required');
+
+            return errors;
+        },
+
+        startDateErrors() {
+            const errors = [];
+
+            if (!this.$v.formData.startDate.$dirty) {
+                return errors;
+            }
+
+            !this.$v.formData.startDate.required && errors.push('Start date is required.');
 
             return errors;
         },
@@ -108,15 +166,20 @@ export default {
         endDateErrors() {
             const errors = [];
 
-            if (!this.$v.vacationRequest.endDate.$dirty) {
+            if (!this.$v.formData.endDate.$dirty) {
                 return errors;
             }
-            !this.$v.vacationRequest.endDate.required && errors.push('End date is required.');
-            !this.$v.vacationRequest.endDate.mustBeAfterStartDate && errors.push('End date must be after start date');
+            !this.$v.formData.endDate.required && errors.push('End date is required.');
+            !this.$v.formData.endDate.mustBeAfterStartDate && errors.push('End date must be after start date');
 
             return errors;
         }
     },
+
+    created() {
+        !this.isCreateModal() && this.setEditData();
+    },
+
     methods: {
         ...mapActions(['saveVacationRequest', 'deleteVacationRequest']),
 
@@ -138,24 +201,20 @@ export default {
         },
 
         submit() {
-            this.$v.$touch();
+            this.$v.$touch;
 
             if (!this.$v.$invalid) {
-                this.saveVacationRequest(this.vacationRequest);
+                this.saveVacationRequest(this.formData);
             }
         },
 
         setEditData() {
-            this.vacationRequest = { ...this.selectedItem };
+            this.formData = { ...this.selectedItem };
         },
 
         isCreateModal() {
             return !this.selectedItem;
         }
-    },
-
-    created() {
-        !this.isCreateModal() && this.setEditData();
     }
 };
 </script>

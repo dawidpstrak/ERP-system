@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    mysql:
+        image: mysql:5.7
+        container_name: mysql.erpsystem.docker
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: erp_system
+            MYSQL_USER: root
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - ~/data/mysql.erpsystem.docker:/var/lib/mysql
+        ports:
+            - 3306:3306
+        expose:
+            - 3306

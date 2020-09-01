@@ -16,7 +16,7 @@
             @click:row="openModal($event)"
         />
 
-        <CreateOrEditContract v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
+        <create-or-edit-contract v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
     </v-container>
 </template>
 
@@ -26,7 +26,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
-        CreateOrEditContract
+        'create-or-edit-contract': CreateOrEditContract
     },
     data() {
         return {

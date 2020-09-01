@@ -57,7 +57,7 @@ export default {
             const adminLinks = [
                 ...userLinks,
                 { title: 'CONTRACTS', icon: 'mdi-account-clock-outline ', to: '/contracts' },
-                { title: 'EMPLOYEE', icon: 'mdi-human', to: '/employees' }
+                { title: 'VACATIONS', icon: 'mdi-hail', to: '/vacation-requests' }
             ];
 
             return this.isAdmin ? adminLinks : userLinks;

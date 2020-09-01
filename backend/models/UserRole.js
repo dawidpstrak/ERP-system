@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         'UserRole',
         {
             userId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 primaryKey: true,
                 references: {
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             },
             roleId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 primaryKey: true,
                 references: {

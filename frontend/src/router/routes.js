@@ -4,7 +4,7 @@ export const routes = [
     { path: '/', name: 'login', component: () => import('@/views/Login') },
     { path: '/dashboard', name: 'dashboard', component: () => import('@/views/Dashboard') },
     { path: '/contracts', name: 'contracts', component: () => import('@/views/Contracts') },
-    { path: '/employees', name: 'employee', component: () => import('@/views/Employee') },
+    { path: '/vacation-requests', name: 'employee', component: () => import('@/views/VacationRequests') },
     {
         path: '/logout',
         beforeEnter(to, from, next) {

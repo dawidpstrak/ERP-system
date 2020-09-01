@@ -16,11 +16,7 @@
             @click:row="openModal($event)"
         />
 
-        <CreateOrEditEmployee
-            v-if="showModal"
-            :selectedItem="selectedItem"
-            @closeModal="closeModal"
-        />
+        <create-or-edit-employee v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
     </v-container>
 </template>
 
@@ -29,7 +25,7 @@ import { mapActions, mapGetters } from 'vuex';
 import CreateOrEditEmployee from './CreateOrEditEmployee';
 
 export default {
-    components: { CreateOrEditEmployee },
+    components: { 'create-or-edit-employee': CreateOrEditEmployee },
     data() {
         return {
             headers: [

@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
         'Contract',
         {
             id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true
+                type: DataTypes.UUID,
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4
             },
             userId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 onDelete: 'cascade',
                 references: {

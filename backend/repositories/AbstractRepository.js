@@ -17,7 +17,7 @@ class AbstractRepository {
     }
 
     getAll() {
-        this.modal.findAll();
+        return this.model.findAll();
     }
 
     getAllByUser(userId, options = {}) {
