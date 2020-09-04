@@ -12,7 +12,7 @@ module.exports = di => {
 
     router.get('/', [authorization, adminOnly], (...args) => userController.index(...args));
 
-    router.get('/:id', [authorization], (...args) => userController.show(...args));
+    router.get('/me', [authorization], (...args) => userController.me(...args));
 
     router.post('/', [authorization, adminOnly], [userValidator.store, validate], (...args) =>
         userController.store(...args)

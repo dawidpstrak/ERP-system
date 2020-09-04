@@ -25,9 +25,9 @@ class UserController {
         }
     }
 
-    async show(req, res) {
+    async me(req, res) {
         try {
-            const { id } = req.params;
+            const { id } = req.loggedUser;
 
             const user = await this.userRepository.getByIdWithAssociations(id);
 

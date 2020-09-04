@@ -39,8 +39,8 @@ const actions = {
         commit('SET_USER_TOKEN', data.token);
     },
 
-    async renewLoggedUserData({ commit, getters }) {
-        const { data } = await axios.get(`users/${getters.loggedUser.id}`);
+    async renewLoggedUserData({ commit }) {
+        const { data } = await axios.get(`users/me`);
 
         commit('SET_LOGGED_USER', data);
     }
