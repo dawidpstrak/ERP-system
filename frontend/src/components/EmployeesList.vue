@@ -35,7 +35,7 @@ export default {
                 {
                     text: 'Available vacations',
                     align: 'center',
-                    value: 'contracts[0].totalDaysOff',
+                    value: 'availableDaysOffAmount',
                     sortable: false
                 },
                 { text: 'Birth date', align: 'center', value: 'birthDate', sortable: false }

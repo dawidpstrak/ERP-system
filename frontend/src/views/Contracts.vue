@@ -36,7 +36,7 @@ export default {
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                 { text: 'Duration', align: 'center', value: 'duration', sortable: false },
-                { text: 'Available days off', align: 'center', value: 'availableDaysOff', sortable: false }
+                { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false }
             ],
             footerProps: {
                 itemsPerPageText: 'Contracts per page'

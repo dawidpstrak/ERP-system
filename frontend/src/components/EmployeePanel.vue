@@ -1,6 +1,8 @@
 <template>
     <v-container fluid class="pa-0 ma-0">
-        <v-container class="d-flex justify-center">Available vacation days : {{ totalVacationDays }}</v-container>
+        <v-container class="d-flex justify-center"
+            >Available vacation days : {{ loggedUser.availableDaysOffAmount }}</v-container
+        >
         <h2>Your contracts</h2>
         <v-container fluid>
             <v-data-table
@@ -54,7 +56,7 @@ export default {
                     { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                     { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                     { text: 'Duration/months', align: 'center', value: 'duration', sortable: false },
-                    { text: 'Available days off', align: 'center', value: 'availableDaysOff', sortable: false }
+                    { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false }
                 ],
                 footer: {
                     itemsPerPageText: 'Contracts per page'
@@ -78,11 +80,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters({ loggedUser: 'loggedUser', contracts: 'getContracts', vacationRequests: 'getVacationRequests' }),
-
-        totalVacationDays() {
-            return this.contracts.map(contract => contract.availableDaysOff).reduce((acc, val) => acc + val, 0);
-        }
+        ...mapGetters({ loggedUser: 'loggedUser', contracts: 'getContracts', vacationRequests: 'getVacationRequests' })
     },
     methods: {
         ...mapActions(['fetchContracts', 'fetchVacationRequests']),

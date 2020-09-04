@@ -102,7 +102,7 @@ export default {
                 endDate: '',
                 duration: null,
                 vacationsPerYear: null,
-                availableDaysOff: null
+                availableDaysOffAmount: null
             },
             formData: {},
             durationOptions: [1, 3, 6, 12],
@@ -186,7 +186,9 @@ export default {
         },
 
         calculateAvailableDaysOff() {
-            this.formData.availableDaysOff = Math.round((this.formData.vacationsPerYear / 12) * this.formData.duration);
+            this.formData.availableDaysOffAmount = Math.round(
+                (this.formData.vacationsPerYear / 12) * this.formData.duration
+            );
         },
 
         calculateAll() {

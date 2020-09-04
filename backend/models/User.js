@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false
+            },
+            availableDaysOffAmount: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
             }
         },
         {
@@ -74,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate'];
+    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate', 'totalDaysOff'];
 
     return User;
 };

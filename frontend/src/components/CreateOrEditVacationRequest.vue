@@ -120,7 +120,7 @@ export default {
                 startDate: '',
                 endDate: ''
             },
-            requestStatuses: ['active', 'pending', 'declined']
+            requestStatuses: ['active', 'pending']
         };
     },
 

@@ -48,5 +48,8 @@ module.exports = (sequelize, DataTypes) => {
 
     VacationRequest.UPDATABLE_FIELDS = ['startDate', 'endDate', 'status', 'requestedDaysOff'];
 
+    VacationRequest.ACTIVE = 'active';
+    VacationRequest.PENDING = 'pending';
+
     return VacationRequest;
 };

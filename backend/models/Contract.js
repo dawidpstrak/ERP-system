@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            availableDaysOff: {
+            availableDaysOffAmount: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
@@ -55,7 +55,14 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    Contract.UPDATABLE_FIELDS = ['startDate', 'endDate', 'duration', 'status', 'vacationsPerYear', 'availableDaysOff'];
+    Contract.UPDATABLE_FIELDS = [
+        'startDate',
+        'endDate',
+        'duration',
+        'status',
+        'vacationsPerYear',
+        'availableDaysOffAmount'
+    ];
 
     return Contract;
 };

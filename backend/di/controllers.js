@@ -10,11 +10,20 @@ module.exports = {
         },
         'controllers.contract': {
             class: '../controllers/ContractController',
-            arguments: ['@repositories.user', '@repositories.contract', '@repositories.role']
+            arguments: [
+                '@repositories.user',
+                '@repositories.contract',
+                '@services.daysOffAmount.userDaysOffAmountCalculator'
+            ]
         },
         'controllers.vacationRequest': {
             class: '../controllers/VacationRequestController',
-            arguments: ['@repositories.vacationRequest', '@repositories.user', '%moment']
+            arguments: [
+                '@repositories.vacationRequest',
+                '@repositories.user',
+                '%moment',
+                '@services.daysOffAmount.userDaysOffAmountCalculator'
+            ]
         }
     }
 };

@@ -6,12 +6,14 @@ class VacationRequestController {
     /**
      * @param { VacationRequestRepository } vacationRequestRepository
      * @param { UserRepository } userRepository
+     * @param { UserDaysOffAmountCalculator } userDaysOffAmountCalculator
      */
 
-    constructor(vacationRequestRepository, userRepository, moment) {
+    constructor(vacationRequestRepository, userRepository, moment, userDaysOffAmountCalculator) {
         this.vacationRequestRepository = vacationRequestRepository;
         this.userRepository = userRepository;
         this.moment = moment;
+        this.userDaysOffAmountCalculator = userDaysOffAmountCalculator;
     }
 
     async index(req, res) {
@@ -39,24 +41,28 @@ class VacationRequestController {
             const { startDate, endDate, email, status } = req.body;
             const { id: userId, isAdmin } = req.loggedUser;
 
-            const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
-
             let user;
 
             if (isAdmin) {
                 user = await this.userRepository.findByEmail(email);
-
-                if (!user) {
-                    return res.status(HTTP.NOT_FOUND).send({ message: 'Not found user with that email' });
-                }
+            } else {
+                user = await this.userRepository.findByPk(userId);
             }
+
+            if (!user) {
+                return res.status(HTTP.NOT_FOUND).send({ message: 'Can not find this user' });
+            }
+
+            const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
 
             const newVacationRequest = await this.vacationRequestRepository.create({
                 ...req.body,
                 userId: isAdmin ? user.id : userId,
-                status: isAdmin ? status : 'pending',
+                status: isAdmin ? status : VacationRequest.PENDING,
                 requestedDaysOff
             });
+
+            await this.userDaysOffAmountCalculator.onVacationRequestStore(user, requestedDaysOff);
 
             return res.status(HTTP.CREATED).send(newVacationRequest);
         } catch (error) {
@@ -68,23 +74,48 @@ class VacationRequestController {
 
     async update(req, res) {
         try {
-            const { id, startDate, endDate, status } = req.body;
+            const { id: vacationRequestId, userId, startDate, endDate, status } = req.body;
             const { isAdmin } = req.loggedUser;
 
-            const vacationRequest = await this.vacationRequestRepository.findByPk(id);
-
-            if (!vacationRequest) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'Can not update not exisiting vacation request' });
+            if (!isAdmin && status !== VacationRequest.PENDING) {
+                return res.sendStatus(HTTP.FORBIDDEN);
             }
 
-            const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
+            const user = await this.userRepository.findByUserIdAndVacationRequestId(userId, vacationRequestId);
+
+            if (!user) {
+                return res.status(HTTP.NOT_FOUND).send({ message: 'Vacation request belongs to other user' });
+            }
+
+            const vacationRequest = await this.vacationRequestRepository.findByPk(vacationRequestId);
+
+            if (!vacationRequest) {
+                return res.status(HTTP.NOT_FOUND);
+            }
+
+            const previousRequestedDaysOff = vacationRequest.requestedDaysOff;
+
+            const actualRequestedDaysOff = this.moment
+                .duration(this.moment(endDate).diff(this.moment(startDate)))
+                .days();
 
             await vacationRequest.update(
-                { ...req.body, status: isAdmin ? status : 'pending', requestedDaysOff },
+                {
+                    ...req.body,
+                    status: isAdmin ? status : VacationRequest.PENDING,
+                    requestedDaysOff: actualRequestedDaysOff
+                },
+
                 { fields: VacationRequest.UPDATABLE_FIELDS }
             );
 
-            const updatedVacationRequest = await this.vacationRequestRepository.findByPk(id);
+            await this.userDaysOffAmountCalculator.onVacationRequestUpdate(
+                user,
+                previousRequestedDaysOff,
+                actualRequestedDaysOff
+            );
+
+            const updatedVacationRequest = await this.vacationRequestRepository.findByPk(vacationRequestId);
 
             return res.send(updatedVacationRequest);
         } catch (error) {
@@ -102,6 +133,11 @@ class VacationRequestController {
 
             if (vacationRequest) {
                 await vacationRequest.destroy();
+
+                await this.userDaysOffAmountCalculator.onVacationRequestDelete(
+                    vacationRequest.userId,
+                    vacationRequest.requestedDaysOff
+                );
             }
 
             return res.sendStatus(HTTP.NO_CONTENT);

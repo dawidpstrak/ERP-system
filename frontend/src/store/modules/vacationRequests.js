@@ -31,13 +31,14 @@ const actions = {
         }
 
         dispatch('fetchVacationRequests');
-        dispatch('fetchContracts');
+        dispatch('renewLoggedUserData');
     },
 
     async deleteVacationRequest({ dispatch }, id) {
         await axios.delete(`/vacationRequests/${id}`);
 
         dispatch('fetchVacationRequests');
+        dispatch('renewLoggedUserData');
     }
 };
 

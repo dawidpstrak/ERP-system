@@ -16,13 +16,8 @@ class UserRepository extends AbstractRepository {
                     where: {
                         name: 'user'
                     }
-                },
-                {
-                    association: 'contracts',
-                    attributes: [[db.sequelize.fn('sum', db.sequelize.col('availableDaysOff')), 'totalDaysOff']]
                 }
-            ],
-            group: 'id'
+            ]
         });
     }
 
@@ -32,6 +27,34 @@ class UserRepository extends AbstractRepository {
                 email
             },
             ...options
+        });
+    }
+
+    findByEmailAndContractId(email, contractId) {
+        return this.model.findOne({
+            where: {
+                email
+            },
+            include: {
+                association: 'contracts',
+                where: {
+                    id: contractId
+                }
+            }
+        });
+    }
+
+    findByUserIdAndVacationRequestId(userId, vacationRequetsId) {
+        return this.model.findOne({
+            where: {
+                id: userId
+            },
+            include: {
+                association: 'vacationRequests',
+                where: {
+                    id: vacationRequetsId
+                }
+            }
         });
     }
 

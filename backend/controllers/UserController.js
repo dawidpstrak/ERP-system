@@ -25,6 +25,20 @@ class UserController {
         }
     }
 
+    async show(req, res) {
+        try {
+            const { id } = req.params;
+
+            const user = await this.userRepository.getByIdWithAssociations(id);
+
+            return res.send(user);
+        } catch (error) {
+            console.error(error);
+
+            return res.sendStatus(HTTP.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async store(req, res) {
         try {
             const { roles } = req.body;

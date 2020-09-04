@@ -12,6 +12,8 @@ module.exports = di => {
 
     router.get('/', [authorization, adminOnly], (...args) => userController.index(...args));
 
+    router.get('/:id', [authorization], (...args) => userController.show(...args));
+
     router.post('/', [authorization, adminOnly], [userValidator.store, validate], (...args) =>
         userController.store(...args)
     );

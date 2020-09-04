@@ -1,4 +1,5 @@
 import AuthenticationService from '@/services/AuthenticationService';
+import axios from '@/plugins/axios';
 
 const initialState = () => {
     return {
@@ -36,6 +37,12 @@ const actions = {
 
         commit('SET_LOGGED_USER', data.loggedUser);
         commit('SET_USER_TOKEN', data.token);
+    },
+
+    async renewLoggedUserData({ commit, getters }) {
+        const { data } = await axios.get(`users/${getters.loggedUser.id}`);
+
+        commit('SET_LOGGED_USER', data);
     }
 };
 
