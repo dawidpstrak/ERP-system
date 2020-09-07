@@ -77,9 +77,7 @@
 
             <v-btn v-if="isCreateModal()" @click="setDefaultFormData">reset</v-btn>
 
-            <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="deleteEmployee(formData)"
-                >Dismiss</v-btn
-            >
+            <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Dismiss</v-btn>
         </v-form>
     </div>
 </template>
@@ -88,6 +86,8 @@
 import { mapActions } from 'vuex';
 import { validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, sameAs, email } from 'vuelidate/lib/validators';
+
+import NotifyingService from '@/services/NotifyingService';
 
 export default {
     props: {
@@ -229,12 +229,37 @@ export default {
 
     methods: {
         ...mapActions(['saveEmployee', 'deleteEmployee']),
-        submit() {
+        async submit() {
             this.$v.$touch;
 
-            if (!this.$v.$invalid) {
-                this.onClose();
-                this.saveEmployee(this.formData);
+            if (this.$v.$invalid) {
+                return;
+            }
+
+            this.onClose();
+
+            try {
+                await this.saveEmployee(this.formData);
+
+                this.formData.id ? NotifyingService.updated('employee') : NotifyingService.created('employee');
+            } catch (error) {
+                if (error.response) {
+                    NotifyingService.handleError(error);
+                }
+
+                console.error(error);
+            }
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteEmployee(this.formData.id);
+
+                NotifyingService.deleted('employee');
+            } catch (error) {
+                NotifyingService.handleError(error);
+
+                console.error(error);
             }
         },
 

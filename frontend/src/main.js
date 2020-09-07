@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import App from './App.vue';
 import Vuetify from 'vuetify';
+import Notifications from 'vue-notification';
 import 'vuetify/dist/vuetify.min.css';
 
 import store from './store/store';
 import router from './router/router';
 
+Vue.use(Notifications);
 Vue.use(Vuetify);
 
 new Vue({

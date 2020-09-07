@@ -63,14 +63,7 @@
             <v-container>
                 <v-btn class="mr-4" type="submit">submit</v-btn>
 
-                <v-btn
-                    v-if="!isCreateModal()"
-                    class="ml-10"
-                    depressed
-                    color="error"
-                    @click="deleteVacationRequest(formData.id)"
-                    >Delete</v-btn
-                >
+                <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Delete</v-btn>
             </v-container>
         </v-form>
     </div>
@@ -82,6 +75,8 @@ import moment from 'moment';
 import { validationMixin } from 'vuelidate';
 import { required, email, requiredIf } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters } from 'vuex';
+
+import NotifyingService from '@/services/NotifyingService';
 
 const mustBeAfterStartDate = (value, vm) => value > vm.startDate;
 
@@ -183,6 +178,38 @@ export default {
     methods: {
         ...mapActions(['saveVacationRequest', 'deleteVacationRequest']),
 
+        async submit() {
+            this.$v.$touch;
+
+            if (this.$v.$invalid) {
+                return;
+            }
+
+            try {
+                await this.saveVacationRequest(this.formData);
+
+                this.formData.id
+                    ? NotifyingService.updated('vacation request')
+                    : NotifyingService.created('vacation request');
+            } catch (error) {
+                NotifyingService.handleError(error);
+
+                console.error(error);
+            }
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteVacationRequest(this.formData.id);
+
+                NotifyingService.deleted('vacation request');
+            } catch (error) {
+                NotifyingService.handleError(error);
+
+                console.error(error);
+            }
+        },
+
         formTitle() {
             return this.isCreateModal() ? 'New vacation' : 'Edit vacation';
         },
@@ -198,14 +225,6 @@ export default {
             const vacationDuration = moment.duration(vacationEnd.diff(vacationStart)).days();
 
             return vacationDuration;
-        },
-
-        submit() {
-            this.$v.$touch;
-
-            if (!this.$v.$invalid) {
-                this.saveVacationRequest(this.formData);
-            }
         },
 
         setEditData() {

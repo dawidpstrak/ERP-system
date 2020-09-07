@@ -24,7 +24,11 @@ const actions = {
     },
 
     async saveContract({ dispatch }, contract) {
-        contract.id ? await axios.put(`/contracts/${contract.id}`, contract) : await axios.post('/contracts', contract);
+        if (contract.id) {
+            await axios.put(`/contracts/${contract.id}`, contract);
+        } else {
+            await axios.post('/contracts', contract);
+        }
 
         dispatch('fetchContracts');
     },

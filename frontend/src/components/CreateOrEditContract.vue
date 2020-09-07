@@ -55,14 +55,7 @@
 
                 <v-btn v-if="isCreateModal()" @click="setDefaultFormData">reset</v-btn>
 
-                <v-btn
-                    v-if="!isCreateModal()"
-                    class="ml-10"
-                    depressed
-                    color="error"
-                    @click="deleteContract(formData.id)"
-                    >Delete</v-btn
-                >
+                <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Delete</v-btn>
             </v-container>
         </v-form>
     </div>
@@ -74,6 +67,8 @@ import moment from 'moment';
 import { validationMixin } from 'vuelidate';
 import { required, email } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
+
+import NotifyingService from '@/services/NotifyingService';
 
 export default {
     props: {
@@ -168,6 +163,37 @@ export default {
 
     methods: {
         ...mapActions(['saveContract', 'deleteContract']),
+        async submit() {
+            this.$v.$touch;
+
+            if (this.$v.$invalid) {
+                return;
+            }
+
+            this.calculateAll();
+
+            try {
+                await this.saveContract(this.formData);
+
+                this.formData.id ? NotifyingService.updated('contract') : NotifyingService.created('contract');
+            } catch (error) {
+                NotifyingService.handleError(error);
+
+                console.error(error);
+            }
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteContract(this.formData.id);
+
+                NotifyingService.deleted('contract');
+            } catch (error) {
+                NotifyingService.handleError(error);
+
+                console.error(error);
+            }
+        },
 
         formTitle() {
             return this.isCreateModal() ? 'New contract' : 'Edit contract';
@@ -192,18 +218,9 @@ export default {
         },
 
         calculateAll() {
+            // TODO extra check on backend in future
             this.calculateEndDate();
             this.calculateAvailableDaysOff();
-        },
-
-        async submit() {
-            this.$v.$touch;
-
-            if (!this.$v.$invalid) {
-                this.calculateAll();
-
-                await this.saveContract(this.formData);
-            }
         },
 
         setDefaultFormData() {

@@ -2,6 +2,7 @@
     <v-app>
         <Sidebar v-if="$route.path !== '/'" />
         <router-view />
+        <notifications />
     </v-app>
 </template>
 

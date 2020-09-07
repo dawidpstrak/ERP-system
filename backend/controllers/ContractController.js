@@ -40,10 +40,6 @@ class ContractController {
 
             const user = await this.userRepository.findByEmail(email, ['id']);
 
-            if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'Not found user with that email' });
-            }
-
             const contract = await this.contractRepository.create({
                 userId: user.id,
                 ...req.body

@@ -17,18 +17,24 @@ axios.interceptors.request.use(
     },
 
     error => {
-        Promise.reject(error);
+        throw error;
     }
 );
 
+const isNotLoginError = error => {
+    return error.response.data.message !== 'Wrong credentials' && error.response.status === 401;
+};
+
 axios.interceptors.response.use(
     response => response,
+
     error => {
-        if ([401, 403].includes(error.response.status)) {
-            // JWT token expired or unauthorized request- logout
+        if (error.response.status === 401 && isNotLoginError(error)) {
+            // JWT token expired  - logout
 
             window.location.href = '/logout';
         }
+        throw error;
     }
 );
 

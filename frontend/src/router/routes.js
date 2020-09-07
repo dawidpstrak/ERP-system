@@ -1,4 +1,5 @@
 import store from '../store/store';
+import NotifyingService from '@/services/NotifyingService';
 
 export const routes = [
     { path: '/', name: 'login', component: () => import('@/views/Login') },
@@ -9,6 +10,9 @@ export const routes = [
         path: '/logout',
         beforeEnter(to, from, next) {
             store.commit('REMOVE_USER_DATA');
+
+            NotifyingService.loggedOut();
+
             next({ name: 'login' });
         }
     },

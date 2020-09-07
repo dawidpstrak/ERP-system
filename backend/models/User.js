@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate', 'totalDaysOff'];
+    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate', 'availableDaysOffAmount'];
 
     return User;
 };

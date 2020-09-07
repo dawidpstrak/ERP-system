@@ -24,13 +24,17 @@ const actions = {
     },
 
     async saveEmployee({ dispatch }, employee) {
-        employee.id ? await axios.put(`/users/${employee.id}`, employee) : await axios.post('/users', employee);
+        if (employee.id) {
+            await axios.put(`/users/${employee.id}`, employee);
+        } else {
+            await axios.post('/users', employee);
+        }
 
         dispatch('fetchEmployees');
     },
 
-    async deleteEmployee({ dispatch }, employee) {
-        await axios.delete(`/users/${employee.id}`, { data: { employee } });
+    async deleteEmployee({ dispatch }, id) {
+        await axios.delete(`/users/${id}`);
 
         dispatch('fetchEmployees');
     }

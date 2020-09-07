@@ -21,7 +21,7 @@ const create = [
             const user = await userRepository.findByEmail(email, { attributes: ['id'] });
 
             if (!user) {
-                return Promise.reject('This user not exist');
+                return Promise.reject('User with that email does not exist');
             }
 
             const contracts = await contractRepository.findAllByUserInTimeInterval(
@@ -31,8 +31,8 @@ const create = [
                 contractId
             );
 
-            if (contracts.length > 0) {
-                return Promise.reject('There is existing contract in that time');
+            if (contracts.length) {
+                return Promise.reject('This user have existing contract in that time');
             }
         })
 ];

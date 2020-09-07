@@ -81,7 +81,7 @@ class UserController {
 
     async delete(req, res) {
         try {
-            const { id } = req.body.employee;
+            const { id } = req.params;
 
             const user = await this.userRepository.findByPk(id);
 

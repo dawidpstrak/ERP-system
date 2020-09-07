@@ -26,12 +26,12 @@
                 </v-card-actions>
             </v-card-text>
         </v-card>
-        <v-alert v-if="error" class="mt-6 alert">{{ this.error }}</v-alert>
     </v-container>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
+import NotifyingService from '@/services/NotifyingService';
 
 export default {
     data() {
@@ -40,8 +40,7 @@ export default {
             credentials: {
                 email: '',
                 password: ''
-            },
-            error: ''
+            }
         };
     },
     methods: {
@@ -50,10 +49,12 @@ export default {
             try {
                 await this.login(this.credentials);
 
+                NotifyingService.loggedIn();
+
                 this.$router.push({ name: 'dashboard' });
             } catch (error) {
                 if (error.response) {
-                    this.error = error.response.status === 401 && 'Wrong username or password';
+                    NotifyingService.handleError(error);
                 }
 
                 console.error(error);
@@ -63,6 +64,7 @@ export default {
 };
 </script>
 
+// TODO use vuetify classes insted of styles below
 <style scoped>
 .login-button {
     margin: 15px 5px;
