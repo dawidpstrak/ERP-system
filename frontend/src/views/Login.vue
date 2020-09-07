@@ -10,17 +10,30 @@
                         v-model="credentials.email"
                         label="Email"
                         prepend-icon="mdi-account-circle"
+                        error-count="2"
+                        required
+                        :error-messages="emailErrors"
+                        @input="$v.credentials.email.$touch()"
+                        @blur="$v.credentials.email.$touch()"
+                        @keyup="clearServerErrors('login')"
                     />
                     <v-text-field
                         v-model="credentials.password"
-                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         prepend-icon="mdi-lock"
-                        :type="showPassword ? 'text' : 'password'"
                         label="Password"
+                        error-count="2"
+                        required
+                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPassword ? 'text' : 'password'"
+                        :error-messages="passwordErrors"
+                        @keyup.enter="loginRequest"
                         @click:append="showPassword = !showPassword"
+                        @input="$v.credentials.password.$touch()"
+                        @blur="$v.credentials.password.$touch()"
+                        @keyup="clearServerErrors('password')"
                     ></v-text-field>
                 </v-form>
-                <v-divider></v-divider>
+                <v-divider class="mt-6"></v-divider>
                 <v-card-actions class="justify-center">
                     <v-btn class="login-button" color="info" @click="loginRequest">Login</v-btn>
                 </v-card-actions>
@@ -32,8 +45,10 @@
 <script>
 import { mapActions } from 'vuex';
 import NotifyingService from '@/services/NotifyingService';
+import loginValidatorMixin from '@/validators/auth/loginValidator.mixin';
 
 export default {
+    mixins: [loginValidatorMixin],
     data() {
         return {
             showPassword: false,
@@ -47,13 +62,19 @@ export default {
         ...mapActions(['login']),
         async loginRequest() {
             try {
+                this.$v.$touch();
+
+                if (!this.isValid) {
+                    return;
+                }
+
                 await this.login(this.credentials);
 
                 NotifyingService.loggedIn();
 
                 this.$router.push({ name: 'dashboard' });
             } catch (error) {
-                if (error.response) {
+                if (!this.checkForServerFormErrors(error)) {
                     NotifyingService.handleError(error);
                 }
 

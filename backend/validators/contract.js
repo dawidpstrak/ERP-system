@@ -1,40 +1,39 @@
 const { body } = require('express-validator');
 
-const di = req => {
-    return req.app.get('di');
-};
-
 const create = [
-    body(['startDate'])
+    body('email')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('email can not be empty')
+        .isEmail()
+        .withMessage('email address is not valid')
+        .normalizeEmail(),
+
+    body('startDate')
         .trim()
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
         .isISO8601()
-        .withMessage('Invalid date format')
-        .custom(async (startDate, { req }) => {
-            const { id: contractId, email, endDate } = req.body;
+        .withMessage('Invalid date format'),
 
-            const contractRepository = di(req).get('repositories.contract');
-            const userRepository = di(req).get('repositories.user');
+    body('endDate')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('Should not be empty')
+        .isISO8601()
+        .withMessage('Invalid date format'),
 
-            const user = await userRepository.findByEmail(email, { attributes: ['id'] });
+    body('duration').not().isEmpty().withMessage('Should not be empty').isInt().withMessage('Should be integer type'),
 
-            if (!user) {
-                return Promise.reject('User with that email does not exist');
-            }
-
-            const contracts = await contractRepository.findAllByUserInTimeInterval(
-                startDate,
-                endDate,
-                user.id,
-                contractId
-            );
-
-            if (contracts.length) {
-                return Promise.reject('This user have existing contract in that time');
-            }
-        })
+    body('availableDaysOffAmount')
+        .not()
+        .isEmpty()
+        .withMessage('Should not be empty')
+        .isInt()
+        .withMessage('Should be integer type')
 ];
 
 const update = [...create];

@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4
             },
-            name: {
+            firstName: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            surname: {
+            lastName: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    User.UPDATABLE_FIELDS = ['name', 'surname', 'email', 'birthDate', 'availableDaysOffAmount'];
+    User.UPDATABLE_FIELDS = ['firstName', 'lastName', 'email', 'birthDate', 'availableDaysOffAmount'];
 
     return User;
 };

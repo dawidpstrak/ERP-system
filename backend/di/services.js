@@ -4,9 +4,13 @@ module.exports = {
             class: '../services/Auth/LoginHandler',
             arguments: ['@repositories.user', '%bcrypt']
         },
-        'services.daysOffAmount.userDaysOffAmountCalculator': {
-            class: '../services/DaysOffAmount/UserDaysOffAmountCalculator',
+        'services.user.userDaysOffAmountCalculator': {
+            class: '../services/User/UserDaysOffAmountCalculator',
             arguments: ['@repositories.user']
+        },
+        'services.contract.contractsOverlapHandler': {
+            class: '../services/Contract/ContractsOverlapHandler',
+            arguments: ['@repositories.contract']
         }
     }
 };

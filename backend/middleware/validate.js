@@ -14,5 +14,5 @@ module.exports = (req, res, next) => {
         return { message: e.msg, param: e.param };
     });
 
-    return res.status(HTTP.BAD_REQUEST).json({ errors });
+    return res.status(HTTP.BAD_REQUEST).json({ errors, isServerFormValidationError: true });
 };

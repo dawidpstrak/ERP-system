@@ -31,8 +31,8 @@ export default {
     data() {
         return {
             headers: [
-                { text: 'Name', align: 'center', value: 'user.name', sortable: false },
-                { text: 'Surname', align: 'center', value: 'user.surname', sortable: false },
+                { text: 'Name', align: 'center', value: 'user.firstName', sortable: false },
+                { text: 'Surname', align: 'center', value: 'user.lastName', sortable: false },
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                 { text: 'Duration', align: 'center', value: 'duration', sortable: false },

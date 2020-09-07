@@ -11,13 +11,13 @@ class ContractRepository extends AbstractRepository {
         return this.model.findAll({
             include: {
                 association: 'user',
-                attributes: ['name', 'surname', 'email']
+                attributes: ['firstName', 'lastName', 'email']
             },
             ...options
         });
     }
 
-    findAllByUserInTimeInterval(newContractStartDate, newContractEndDate, userId, contractId = null) {
+    findAllByUserInTimeInterval(newContractStartDate, newContractEndDate, userId, contractId) {
         return this.model.findAll({
             where: {
                 userId,

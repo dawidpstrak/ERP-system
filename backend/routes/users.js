@@ -1,11 +1,10 @@
 const express = require('express');
-const router = express.Router();
-
 const adminOnly = require('../middleware/adminOnly');
 const authorization = require('../middleware/authenticate');
 const validate = require('../middleware/validate');
-
 const userValidator = require('../validators/user');
+
+const router = express.Router();
 
 module.exports = di => {
     const userController = di.get('controllers.user');

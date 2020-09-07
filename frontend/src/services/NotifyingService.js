@@ -52,6 +52,15 @@ export default {
 
                 break;
 
+            case 422:
+                Vue.notify({
+                    type: 'error',
+                    title: error.response.data.title ? error.response.data.title : 'Something went wrong',
+                    text: error.response.data.message && error.response.data.message
+                });
+
+                break;
+
             case 404:
                 Vue.notify({
                     type: 'error',
@@ -78,15 +87,7 @@ export default {
                 });
 
                 break;
-            case 400:
-                // mostly express validator errors NOTE: this will be removed in next PR. I pass validation errors into form instead of notifying user with notification
-                Vue.notify({
-                    type: 'error',
-                    title: 'Something went wrong',
-                    text: error.response.data.errors && error.response.data.errors.pop().message
-                });
 
-                break;
             default:
                 break;
         }

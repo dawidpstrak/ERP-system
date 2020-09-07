@@ -11,8 +11,9 @@
                 v-model="formData.email"
                 :error-messages="emailErrors"
                 label="Employee email"
-                @input="$v.formData.email.$touch"
-                @blur="$v.formData.email.$touch"
+                @input="$v.formData.email.$touch()"
+                @blur="$v.formData.email.$touch()"
+                @keyup="clearServerErrors('email')"
             />
 
             <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
@@ -24,8 +25,9 @@
                         :value="formData.startDate"
                         readonly
                         v-on="on"
-                        @input="$v.formData.startDate.$touch"
-                        @blur="$v.formData.startDate.$touch"
+                        @input="$v.formData.startDate.$touch()"
+                        @blur="$v.formData.startDate.$touch()"
+                        @keyup="clearServerErrors('startDate')"
                     />
                 </template>
 
@@ -37,8 +39,9 @@
                 label="Duration in months"
                 :items="durationOptions"
                 :error-messages="durationErrors"
-                @input="$v.formData.duration.$touch"
-                @blur="$v.formData.duration.$touch"
+                @input="$v.formData.duration.$touch()"
+                @blur="$v.formData.duration.$touch()"
+                @keyup="clearServerErrors('duration')"
             />
 
             <v-select
@@ -46,8 +49,9 @@
                 label="Vacation days per year"
                 :items="vacationsPerYearOptions"
                 :error-messages="vacationsPerYearErrors"
-                @input="$v.formData.vacationsPerYear.$touch"
-                @blur="$v.formData.vacationsPerYear.$touch"
+                @input="$v.formData.vacationsPerYear.$touch()"
+                @blur="$v.formData.vacationsPerYear.$touch()"
+                @keyup="clearServerErrors('vacationsPerYear')"
             />
 
             <v-container>
@@ -62,11 +66,10 @@
 </template>
 
 <script>
-import moment from 'moment';
-
-import { validationMixin } from 'vuelidate';
-import { required, email } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
+import createOrEditValidator from '@/validators/contracts/createOrEditValidator.mixin';
+
+import moment from 'moment';
 
 import NotifyingService from '@/services/NotifyingService';
 
@@ -75,19 +78,7 @@ export default {
         selectedItem: Object
     },
 
-    mixins: [validationMixin],
-
-    validations: {
-        formData: {
-            email: {
-                required,
-                email
-            },
-            startDate: { required },
-            duration: { required },
-            vacationsPerYear: { required }
-        }
-    },
+    mixins: [createOrEditValidator],
 
     data() {
         return {
@@ -105,66 +96,14 @@ export default {
         };
     },
 
-    computed: {
-        emailErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.email.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.email.email && errors.push('Must be valid e-mail');
-            !this.$v.formData.email.required && errors.push('E-mail is required');
-
-            return errors;
-        },
-
-        startDateErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.startDate.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.startDate.required && errors.push('Start date is required.');
-
-            return errors;
-        },
-
-        durationErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.duration.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.duration.required && errors.push('formData duration is required.');
-
-            return errors;
-        },
-
-        vacationsPerYearErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.vacationsPerYear.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.vacationsPerYear.required && errors.push('Vacation options field is required.');
-
-            return errors;
-        }
-    },
-
     created() {
-        this.setDefaultFormData();
-        !this.isCreateModal() && this.setEditData();
+        this.isCreateModal() ? this.setDefaultFormData() : this.setEditData();
     },
 
     methods: {
         ...mapActions(['saveContract', 'deleteContract']),
         async submit() {
-            this.$v.$touch;
+            this.$v.$touch();
 
             if (this.$v.$invalid) {
                 return;
@@ -177,7 +116,9 @@ export default {
 
                 this.formData.id ? NotifyingService.updated('contract') : NotifyingService.created('contract');
             } catch (error) {
-                NotifyingService.handleError(error);
+                if (!this.checkForServerFormErrors(error)) {
+                    NotifyingService.handleError(error);
+                }
 
                 console.error(error);
             }

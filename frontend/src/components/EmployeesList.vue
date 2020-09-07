@@ -29,8 +29,8 @@ export default {
     data() {
         return {
             headers: [
-                { text: 'Name', align: 'center', value: 'name', sortable: false },
-                { text: 'Surname', align: 'center', value: 'surname', sortable: false },
+                { text: 'First name', align: 'center', value: 'firstName', sortable: false },
+                { text: 'Last name', align: 'center', value: 'lastName', sortable: false },
                 { text: 'Email', align: 'center', value: 'email', sortable: false },
                 {
                     text: 'Available vacations',

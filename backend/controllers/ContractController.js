@@ -6,12 +6,14 @@ class ContractController {
      * @param { ContractRepository } contractRepository
      * @param { UserRepository } userRepository
      * @param { UserDaysOffAmountCalculator } userDaysOffAmountCalculator
+     * @param { ContractsOverlapHandler } contractsOverlapHandler
      */
 
-    constructor(userRepository, contractRepository, userDaysOffAmountCalculator) {
+    constructor(userRepository, contractRepository, userDaysOffAmountCalculator, contractsOverlapHandler) {
         this.contractRepository = contractRepository;
         this.userRepository = userRepository;
         this.userDaysOffAmountCalculator = userDaysOffAmountCalculator;
+        this.contractsOverlapHandler = contractsOverlapHandler;
     }
 
     async index(req, res) {
@@ -36,9 +38,25 @@ class ContractController {
 
     async store(req, res) {
         try {
-            const { email, availableDaysOffAmount } = req.body;
+            const { email, startDate, endDate, availableDaysOffAmount } = req.body;
 
             const user = await this.userRepository.findByEmail(email, ['id']);
+
+            if (!user) {
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User with that email not exist' });
+            }
+
+            const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
+                startDate,
+                endDate,
+                user.id
+            );
+
+            if (contractOverlaping) {
+                return res
+                    .status(HTTP.UNPROCESSABLE_ENTITY)
+                    .send({ title: 'Cannot create contract', message: 'There is exisiting contract in this time' });
+            }
 
             const contract = await this.contractRepository.create({
                 userId: user.id,
@@ -57,7 +75,13 @@ class ContractController {
 
     async update(req, res) {
         try {
-            const { id: contractId, email, availableDaysOffAmount: actualAvailableDaysOffAmount } = req.body;
+            const {
+                id: contractId,
+                email,
+                startDate,
+                endDate,
+                availableDaysOffAmount: actualAvailableDaysOffAmount
+            } = req.body;
 
             const contract = await this.contractRepository.findByPk(contractId);
 
@@ -69,6 +93,19 @@ class ContractController {
 
             if (!user) {
                 return res.status(HTTP.NOT_FOUND).send({ message: 'This contract belongs to other user' });
+            }
+
+            const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
+                startDate,
+                endDate,
+                user.id,
+                contractId
+            );
+
+            if (contractOverlaping) {
+                return res
+                    .status(HTTP.UNPROCESSABLE_ENTITY)
+                    .send({ title: 'Cannot update contract', message: 'There is exisiting contract in this time' });
             }
 
             const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;

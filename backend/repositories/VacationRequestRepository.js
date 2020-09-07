@@ -10,7 +10,7 @@ class VacationRequestRepository extends AbstractRepository {
         return this.model.findAll({
             include: {
                 association: 'user',
-                attributes: ['email', 'name', 'surname']
+                attributes: ['email', 'firstName', 'lastName']
             }
         });
     }

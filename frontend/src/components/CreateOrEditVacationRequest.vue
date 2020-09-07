@@ -12,8 +12,9 @@
                 v-model="formData.email"
                 :error-messages="emailErrors"
                 label="Employee email"
-                @input="$v.formData.email.$touch"
-                @blur="$v.formData.email.$touch"
+                @input="$v.formData.email.$touch()"
+                @blur="$v.formData.email.$touch()"
+                @keyup="clearServerErrors('email')"
             />
 
             <v-select
@@ -21,9 +22,10 @@
                 v-model="formData.status"
                 label="Set request status"
                 :items="requestStatuses"
-                :error-messages="requestStatusesErrors"
-                @input="$v.formData.status.$touch"
-                @blur="$v.formData.status.$touch"
+                :error-messages="statusErrors"
+                @input="$v.formData.status.$touch()"
+                @blur="$v.formData.status.$touch()"
+                @keyup="clearServerErrors('status')"
             />
 
             <v-menu :nudge-right="40" :close-on-content-click="false" min-width="none" transition="scale-transition">
@@ -35,8 +37,9 @@
                         :value="formData.startDate"
                         readonly
                         v-on="on"
-                        @input="$v.formData.startDate.$touch"
-                        @blur="$v.formData.startDate.$touch"
+                        @input="$v.formData.startDate.$touch()"
+                        @blur="$v.formData.startDate.$touch()"
+                        @keyup="clearServerErrors('startDate')"
                     />
                 </template>
 
@@ -52,8 +55,9 @@
                         :value="formData.endDate"
                         readonly
                         v-on="on"
-                        @input="$v.formData.endDate.$touch"
-                        @blur="$v.formData.endDate.$touch"
+                        @input="$v.formData.endDate.$touch()"
+                        @blur="$v.formData.endDate.$touch()"
+                        @keyup="clearServerErrors('endDate')"
                     />
                 </template>
 
@@ -71,104 +75,31 @@
 
 <script>
 import moment from 'moment';
-
-import { validationMixin } from 'vuelidate';
-import { required, email, requiredIf } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters } from 'vuex';
-
+import createOrEditValidation from '@/validators/vacationRequests/createOrEditValidator.mixin';
 import NotifyingService from '@/services/NotifyingService';
-
-const mustBeAfterStartDate = (value, vm) => value > vm.startDate;
 
 export default {
     props: {
         selectedItem: Object
     },
 
-    mixins: [validationMixin],
-
-    validations: {
-        formData: {
-            email: {
-                required: requiredIf(function() {
-                    return this.isAdmin && this.isCreateModal();
-                }),
-                email
-            },
-            status: {
-                required: requiredIf(function() {
-                    return this.isAdmin;
-                })
-            },
-            startDate: { required },
-            endDate: {
-                required,
-                mustBeAfterStartDate
-            }
-        }
-    },
+    mixins: [createOrEditValidation],
 
     data() {
         return {
             formData: {
                 email: '',
                 startDate: '',
-                endDate: ''
+                endDate: '',
+                status: 'pending'
             },
             requestStatuses: ['active', 'pending']
         };
     },
 
     computed: {
-        ...mapGetters(['isAdmin']),
-        emailErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.email.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.email.email && errors.push('Must be valid e-mail');
-            !this.$v.formData.email.required && errors.push('E-mail is required');
-
-            return errors;
-        },
-
-        requestStatusesErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.status.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.status.required && errors.push('Request status is required');
-
-            return errors;
-        },
-
-        startDateErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.startDate.$dirty) {
-                return errors;
-            }
-
-            !this.$v.formData.startDate.required && errors.push('Start date is required.');
-
-            return errors;
-        },
-
-        endDateErrors() {
-            const errors = [];
-
-            if (!this.$v.formData.endDate.$dirty) {
-                return errors;
-            }
-            !this.$v.formData.endDate.required && errors.push('End date is required.');
-            !this.$v.formData.endDate.mustBeAfterStartDate && errors.push('End date must be after start date');
-
-            return errors;
-        }
+        ...mapGetters(['isAdmin'])
     },
 
     created() {
@@ -179,7 +110,7 @@ export default {
         ...mapActions(['saveVacationRequest', 'deleteVacationRequest']),
 
         async submit() {
-            this.$v.$touch;
+            this.$v.$touch();
 
             if (this.$v.$invalid) {
                 return;
@@ -192,7 +123,9 @@ export default {
                     ? NotifyingService.updated('vacation request')
                     : NotifyingService.created('vacation request');
             } catch (error) {
-                NotifyingService.handleError(error);
+                if (!this.checkForServerFormErrors(error)) {
+                    NotifyingService.handleError(error);
+                }
 
                 console.error(error);
             }

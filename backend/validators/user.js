@@ -5,13 +5,29 @@ const di = req => {
 };
 
 const update = [
-    body(['email'])
+    body('firstName')
         .trim()
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
+        .isLength({ min: 3, max: 255 })
+        .withMessage('Invalid name format. Min length is 3 chars. Max length is 255 chars'),
+
+    body('lastName')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('Should not be empty')
+        .isLength({ min: 3, max: 255 })
+        .withMessage('Invalid surname format. Min length is 3 chars. Max length is 255 chars'),
+
+    body('email')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('email can not be empty')
         .isEmail()
-        .withMessage('Email address is not valid!')
+        .withMessage('email address is not valid')
         .normalizeEmail()
         .bail()
         .custom(async (email, { req }) => {
@@ -25,10 +41,10 @@ const update = [
                 return Promise.reject('Email address already exists!');
             }
 
-            return Promise.resolve('Email adress available');
+            return Promise.resolve();
         }),
 
-    body(['roles'])
+    body('roles')
         .not()
         .isEmpty()
         .withMessage('Should not be empty')
@@ -38,11 +54,9 @@ const update = [
 
             const areAllRolesValid = (await roleRepository.getByNames(roles)).length === roles.length;
 
-            if (areAllRolesValid) {
-                return Promise.resolve('All roles has valid names');
+            if (!areAllRolesValid) {
+                return Promise.reject('Some role not exist');
             }
-
-            return Promise.reject('Some role not exist');
         })
 ];
 

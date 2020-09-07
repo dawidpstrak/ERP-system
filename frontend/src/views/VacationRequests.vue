@@ -33,8 +33,8 @@ export default {
         return {
             vacationRequestsProps: {
                 headers: [
-                    { text: 'Employee Name', align: 'center', value: 'user.name', sortable: false },
-                    { text: 'Employee surname', align: 'center', value: 'user.surname', sortable: false },
+                    { text: 'Employee Name', align: 'center', value: 'user.firstName', sortable: false },
+                    { text: 'Employee surname', align: 'center', value: 'user.lastName', sortable: false },
                     { text: 'Vacation start', align: 'center', value: 'startDate', sortable: false },
                     { text: 'Vacation end', align: 'center', value: 'endDate', sortable: false },
                     { text: 'Requested days off', align: 'center', value: 'requestedDaysOff', sortable: false },

@@ -1,10 +1,9 @@
 const express = require('express');
-const router = express.Router();
-
 const authorization = require('../middleware/authenticate');
 const validate = require('../middleware/validate');
-
 const contractValidator = require('../validators/contract');
+
+const router = express.Router();
 
 module.exports = di => {
     const contractController = di.get('controllers.contract');

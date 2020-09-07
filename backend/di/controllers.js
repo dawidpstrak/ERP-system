@@ -13,7 +13,8 @@ module.exports = {
             arguments: [
                 '@repositories.user',
                 '@repositories.contract',
-                '@services.daysOffAmount.userDaysOffAmountCalculator'
+                '@services.user.userDaysOffAmountCalculator',
+                '@services.contract.contractsOverlapHandler'
             ]
         },
         'controllers.vacationRequest': {
@@ -22,7 +23,7 @@ module.exports = {
                 '@repositories.vacationRequest',
                 '@repositories.user',
                 '%moment',
-                '@services.daysOffAmount.userDaysOffAmountCalculator'
+                '@services.user.userDaysOffAmountCalculator'
             ]
         }
     }
