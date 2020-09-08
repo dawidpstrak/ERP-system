@@ -18,9 +18,20 @@
         "nodemon": "^2.0.4",
         "sequelize": "^6.3.3"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "faker": "^5.1.0",
+        "sequelize-cli": "^6.2.0"
+    },
     "scripts": {
-        "start-server": "nodemon server.js"
+        "start": "nodemon server.js",
+        "db-drop": "npx sequelize-cli db:drop",
+        "db-undo-migrate": "npx sequelize-cli db:migrate:undo:all",
+        "db-undo-seed": "npx sequelize-cli db:seed:undo:all",
+        "db-create": "npx sequelize-cli db:create",
+        "db-setup": "npm run db-undo-migrate && npm run db-migrate && npm run db-seed",
+        "db-setup-fresh": "npm run db-drop && npm run db-create && npm run db-migrate && npm run db-seed",
+        "db-migrate": "npx sequelize-cli db:migrate",
+        "db-seed": "npx sequelize-cli db:seed:all"
     },
     "author": "",
     "license": "ISC"

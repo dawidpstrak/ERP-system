@@ -5,12 +5,13 @@ module.exports = (sequelize, DataTypes) => {
         'Role',
         {
             id: {
-                type: DataTypes.UUID,
                 primaryKey: true,
+                type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4
             },
             name: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             }
         },
         {
@@ -28,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     Role.ADMIN = 'admin';
+    Role.USER = 'user';
 
     return Role;
 };

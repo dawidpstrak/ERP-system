@@ -3,6 +3,12 @@ class AbstractRepository {
         return this.model.create(data, options);
     }
 
+    findOne(options) {
+        return this.model.findOne({
+            ...options
+        });
+    }
+
     findByPk(Pk) {
         return this.model.findByPk(Pk);
     }

@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const env = (key, defaultValue = null) => process.env[key] || defaultValue;
+const env = (key, defaultValue = '') => process.env[key] || defaultValue;
 const isEnabled = key => env(key) && env(key) === 'true';
 
 const config = {
@@ -15,6 +15,17 @@ const config = {
         host: env('DB_HOST', 'localhost'),
         dialect: env('DB_DIALECT'),
         logging: isEnabled('SEQUELIZE_LOGGING') ? console.log : false,
+        url: `${
+            env('DB_DIALECT') +
+            '://' +
+            env('DB_USERNAME') +
+            ':' +
+            env('DB_PASSWORD') +
+            '@' +
+            env('DB_HOST') +
+            '/' +
+            env('DB_NAME')
+        }`,
         define: {
             charset: 'utf8mb4',
             collate: 'utf8mb4_unicode_ci',
