@@ -1,22 +1,33 @@
 <template>
     <v-container fluid>
-        <v-container class="d-flex justify-center pa-3">
-            <v-btn class="ma-2" tile outlined color="success" @click="openModal()">
-                <v-icon left>mdi-plus</v-icon>employee
-            </v-btn>
-        </v-container>
+        <v-card>
+            <v-card class="d-flex align-center justify-space-between" outlined>
+                <v-card-title class="ml-6">Employees</v-card-title>
+                <v-btn outlined color="primary" class="mr-6" @click="openModal()">
+                    <v-icon left>mdi-plus</v-icon>employee
+                </v-btn>
+            </v-card>
+            <v-data-table
+                :headers="headers"
+                :items="employees"
+                :items-per-page="5"
+                :mobile-breakpoint="990"
+                :footer-props="footerProps"
+                class="elevation-1"
+            >
+                <template v-slot:item.actions="{ item }">
+                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error">mdi-delete</v-icon>
+                </template>
+            </v-data-table>
 
-        <v-data-table
-            :headers="headers"
-            :items="employees"
-            :items-per-page="5"
-            :mobile-breakpoint="990"
-            :footer-props="footerProps"
-            class="elevation-1"
-            @click:row="openModal($event)"
-        />
-
-        <create-or-edit-employee v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
+            <create-or-edit-employee
+                v-if="isShown"
+                :isShown="isShown"
+                :selectedItem="selectedItem"
+                @closeModal="closeModal"
+            />
+        </v-card>
     </v-container>
 </template>
 
@@ -38,12 +49,13 @@ export default {
                     value: 'availableDaysOffAmount',
                     sortable: false
                 },
-                { text: 'Birth date', align: 'center', value: 'birthDate', sortable: false }
+                { text: 'Birth date', align: 'center', value: 'birthDate', sortable: false },
+                { text: 'Actions', value: 'actions', sortable: false }
             ],
             footerProps: {
                 itemsPerPageText: 'Employees per page'
             },
-            showModal: false,
+            isShown: false,
             selectedItem: null
         };
     },
@@ -51,12 +63,12 @@ export default {
         ...mapActions(['fetchEmployees']),
         openModal(selectedItem) {
             this.selectedItem = selectedItem;
-            this.showModal = true;
+            this.isShown = true;
         },
 
         closeModal() {
             this.selectedItem = null;
-            this.showModal = false;
+            this.isShown = false;
         }
     },
     computed: {

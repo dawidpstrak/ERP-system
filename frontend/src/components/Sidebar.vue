@@ -1,6 +1,6 @@
 <template>
-    <v-card>
-        <v-navigation-drawer width="200" height="100vh" permanent>
+    <v-card width="200" class="absolute">
+        <v-navigation-drawer height="100vh" permanent>
             <v-list-item>
                 <v-list-item-content class="pa-3">
                     <v-list-item-title class="title" align="center">ERP SYSTEM</v-list-item-title>
@@ -72,5 +72,9 @@ export default {
 }
 .v-list-item {
     background-color: inherit;
+}
+
+.absolute {
+    position: absolute;
 }
 </style>

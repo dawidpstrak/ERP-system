@@ -1,23 +1,35 @@
 <template>
-    <v-container fluid>
-        <v-container class="d-flex justify-center pa-3">
-            <v-btn class="ma-2" tile outlined color="success" @click="openModal()">
-                <v-icon left>mdi-plus</v-icon>Vacation Requests
-            </v-btn>
-        </v-container>
+    <v-container class="spacer" fluid>
+        <v-card>
+            <v-card class="d-flex align-center justify-space-between" outlined>
+                <v-card-title class="ml-6">Vacation requests</v-card-title>
+                <v-btn class="mr-6" outlined color="primary" @click="openModal()">
+                    <v-icon left>mdi-plus</v-icon>Vacation Requests
+                </v-btn>
+            </v-card>
 
-        <v-data-table
-            :headers="vacationRequestsProps.headers"
-            :items="vacationRequests"
-            :items-per-page="5"
-            :mobile-breakpoint="990"
-            :footer-props="vacationRequestsProps.footer"
-            :sort-by="'startDate'"
-            class="elevation-1"
-            @click:row="openModal($event)"
-        />
+            <v-data-table
+                :headers="vacationRequestsProps.headers"
+                :items="vacationRequests"
+                :items-per-page="5"
+                :mobile-breakpoint="990"
+                :footer-props="vacationRequestsProps.footer"
+                :sort-by="'startDate'"
+                class="elevation-1"
+            >
+                <template v-slot:item.actions="{ item }">
+                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error">mdi-delete</v-icon>
+                </template>
+            </v-data-table>
 
-        <create-or-edit-vacation-request v-if="showModal" :selected-item="selectedItem" @closeModal="closeModal" />
+            <create-or-edit-vacation-request
+                v-if="isShown"
+                :isShown="isShown"
+                :selectedItem="selectedItem"
+                @closeModal="closeModal"
+            />
+        </v-card>
     </v-container>
 </template>
 
@@ -38,13 +50,14 @@ export default {
                     { text: 'Vacation start', align: 'center', value: 'startDate', sortable: false },
                     { text: 'Vacation end', align: 'center', value: 'endDate', sortable: false },
                     { text: 'Requested days off', align: 'center', value: 'requestedDaysOff', sortable: false },
-                    { text: 'Status', align: 'center', value: 'status', sortable: false }
+                    { text: 'Status', align: 'center', value: 'status', sortable: false },
+                    { text: 'Actions', value: 'actions', sortable: false }
                 ],
                 footer: {
                     itemsPerPageText: 'Vacation requests per page'
                 }
             },
-            showModal: false,
+            isShown: false,
             selectedItem: null
         };
     },
@@ -57,11 +70,11 @@ export default {
     methods: {
         ...mapActions(['fetchVacationRequests']),
         openModal(selectedItem) {
-            this.showModal = true;
+            this.isShown = true;
             this.selectedItem = selectedItem;
         },
         closeModal() {
-            this.showModal = false;
+            this.isShown = false;
             this.selectedItem = null;
         }
     }

@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="loggedUser" fluid class="pa-0 ma-0">
+    <v-container v-if="loggedUser" fluid class="pa-0  spacer">
         <v-container v-if="isAdmin" fluid class="pa-0 ma-0">
             <EmployeesList />
         </v-container>

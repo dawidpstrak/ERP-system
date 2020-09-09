@@ -1,6 +1,6 @@
 <template>
-    <div class="overlay">
-        <v-form class="pa-10 white col-4" @submit.prevent="submit">
+    <v-dialog v-model="showModal" width="400" persistent>
+        <v-form class="pa-10 white" @submit.prevent="submit">
             <button class="exit-btn" @click="onClose">
                 <v-icon>{{ 'mdi-location-exit' }}</v-icon>
             </button>
@@ -70,7 +70,7 @@
                 <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Delete</v-btn>
             </v-container>
         </v-form>
-    </div>
+    </v-dialog>
 </template>
 
 <script>
@@ -81,7 +81,8 @@ import NotifyingService from '@/services/NotifyingService';
 
 export default {
     props: {
-        selectedItem: Object
+        selectedItem: Object,
+        isShown: Boolean
     },
 
     mixins: [createOrEditValidation],
@@ -94,7 +95,8 @@ export default {
                 endDate: '',
                 status: 'pending'
             },
-            requestStatuses: ['active', 'pending']
+            requestStatuses: ['active', 'pending'],
+            showModal: this.isShown
         };
     },
 
@@ -172,23 +174,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(102, 106, 107, 0.63);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-form {
-    position: relative;
-}
 .exit-btn {
     position: absolute;
     right: 20px;
     top: 20px;
+}
+form {
+    position: relative;
 }
 </style>

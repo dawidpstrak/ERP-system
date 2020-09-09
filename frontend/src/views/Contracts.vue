@@ -1,22 +1,34 @@
 <template>
-    <v-container fluid>
-        <v-container class="d-flex justify-center pa-3">
-            <v-btn class="ma-2" tile outlined color="success" @click="openModal()">
-                <v-icon left>mdi-plus</v-icon>contract
-            </v-btn>
-        </v-container>
+    <v-container class="spacer" fluid>
+        <v-card>
+            <v-card class="d-flex align-center justify-space-between" outlined>
+                <v-card-title class="ml-6">Contracts</v-card-title>
+                <v-btn class="mr-6" outlined color="primary" @click="openModal()">
+                    <v-icon left>mdi-plus</v-icon>contract
+                </v-btn>
+            </v-card>
 
-        <v-data-table
-            :headers="headers"
-            :items="contracts"
-            :items-per-page="5"
-            :mobile-breakpoint="990"
-            :footer-props="footerProps"
-            class="elevation-1"
-            @click:row="openModal($event)"
-        />
+            <v-data-table
+                :headers="headers"
+                :items="contracts"
+                :items-per-page="5"
+                :mobile-breakpoint="990"
+                :footer-props="footerProps"
+                class="elevation-1"
+            >
+                <template v-slot:item.actions="{ item }">
+                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error">mdi-delete</v-icon>
+                </template>
+            </v-data-table>
 
-        <create-or-edit-contract v-if="showModal" :selectedItem="selectedItem" @closeModal="closeModal" />
+            <create-or-edit-contract
+                v-if="isShown"
+                :isShown="isShown"
+                :selectedItem="selectedItem"
+                @closeModal="closeModal"
+            />
+        </v-card>
     </v-container>
 </template>
 
@@ -36,12 +48,13 @@ export default {
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                 { text: 'Duration', align: 'center', value: 'duration', sortable: false },
-                { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false }
+                { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false },
+                { text: 'Actions', value: 'actions', sortable: false }
             ],
             footerProps: {
                 itemsPerPageText: 'Contracts per page'
             },
-            showModal: false,
+            isShown: false,
             selectedItem: null
         };
     },
@@ -51,11 +64,11 @@ export default {
     methods: {
         ...mapActions(['fetchContracts']),
         openModal(selectedItem) {
-            this.showModal = true;
+            this.isShown = true;
             this.selectedItem = selectedItem;
         },
         closeModal() {
-            this.showModal = false;
+            this.isShown = false;
             this.selectedItem = null;
         }
     },
