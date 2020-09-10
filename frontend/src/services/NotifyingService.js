@@ -41,6 +41,14 @@ export default {
         });
     },
 
+    noEditAccess: () => {
+        Vue.notify({
+            type: 'error',
+            title: 'No access rights',
+            text: 'You can edit only pending vacation requests'
+        });
+    },
+
     handleError: error => {
         switch (error.response.status) {
             case 500:

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="showModal" width="400" persistent>
+    <v-dialog v-model="isModalShown" width="400" persistent>
         <v-form class="pa-10 white" @submit.prevent="submit">
             <button class="exit-btn" @click="onClose">
                 <v-icon>{{ 'mdi-location-exit' }}</v-icon>
@@ -64,25 +64,24 @@
                 <v-date-picker v-model="formData.endDate" no-title />
             </v-menu>
 
-            <v-container>
-                <v-btn class="mr-4" type="submit">submit</v-btn>
-
-                <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Delete</v-btn>
-            </v-container>
+            <v-card-actions class="d-flex justify-center">
+                <v-btn text color="primary" type="submit">submit</v-btn>
+            </v-card-actions>
         </v-form>
     </v-dialog>
 </template>
 
 <script>
 import moment from 'moment';
-import { mapActions, mapGetters } from 'vuex';
 import createOrEditValidation from '@/validators/vacationRequests/createOrEditValidator.mixin';
 import NotifyingService from '@/services/NotifyingService';
+
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     props: {
         selectedItem: Object,
-        isShown: Boolean
+        showCreateOrEditModal: Boolean
     },
 
     mixins: [createOrEditValidation],
@@ -96,7 +95,8 @@ export default {
                 status: 'pending'
             },
             requestStatuses: ['active', 'pending'],
-            showModal: this.isShown
+            isModalShown: this.showCreateOrEditModal,
+            resourceName: 'vacation request'
         };
     },
 
@@ -121,25 +121,15 @@ export default {
             try {
                 await this.saveVacationRequest(this.formData);
 
+                this.onClose();
+
                 this.formData.id
-                    ? NotifyingService.updated('vacation request')
-                    : NotifyingService.created('vacation request');
+                    ? NotifyingService.updated(this.resourceName)
+                    : NotifyingService.created(this.resourceName);
             } catch (error) {
                 if (!this.checkForServerFormErrors(error)) {
                     NotifyingService.handleError(error);
                 }
-
-                console.error(error);
-            }
-        },
-
-        async onDelete() {
-            try {
-                await this.deleteVacationRequest(this.formData.id);
-
-                NotifyingService.deleted('vacation request');
-            } catch (error) {
-                NotifyingService.handleError(error);
 
                 console.error(error);
             }

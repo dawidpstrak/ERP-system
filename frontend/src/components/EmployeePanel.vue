@@ -20,10 +20,10 @@
         <v-container fluid>
             <v-card>
                 <v-card class="d-flex align-center justify-space-between" outlined>
-                    <v-card-title
-                        class="ml-6"
-                    >Your vacations ({{ loggedUser.availableDaysOffAmount }} days left)</v-card-title>
-                    <v-btn class="mr-6" outlined color="primary" @click="openModal()">
+                    <v-card-title class="ml-6"
+                        >Your vacations ({{ loggedUser.availableDaysOffAmount }} days left)</v-card-title
+                    >
+                    <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
                         <v-icon left>mdi-plus</v-icon>vacation
                     </v-btn>
                 </v-card>
@@ -37,34 +37,41 @@
                     class="elevation-1"
                 >
                     <template v-slot:item.actions="{ item }">
-                        <v-icon
-                            small
-                            color="primary"
-                            class="mr-2"
-                            @click="openModal(item)"
-                        >mdi-pencil</v-icon>
-                        <v-icon small color="error">mdi-delete</v-icon>
+                        <v-icon small color="primary" class="mr-2" @click="openCreateOrEdit(item)">mdi-pencil</v-icon>
+                        <v-icon small color="error" @click="openConfirmDelete(item)">mdi-delete</v-icon>
                     </template>
                 </v-data-table>
             </v-card>
         </v-container>
 
-        <CreateOrEditVacationRequest
-            v-if="isShown"
-            :isShown="isShown"
+        <create-or-edit-vacation-request
+            v-if="showCreateOrEditModal"
+            :showCreateOrEditModal="showCreateOrEditModal"
             :selectedItem="selectedItem"
-            @closeModal="closeModal"
+            @closeModal="closeCreateOrEdit()"
+        />
+
+        <confirm-delete
+            v-if="showConfirmDelete"
+            :resourceName="resourceName"
+            :showConfirmDelete="showConfirmDelete"
+            @canceled="showConfirmDelete = false"
+            @confirmed="onDelete"
         />
     </v-container>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 import CreateOrEditVacationRequest from '../components/CreateOrEditVacationRequest';
+import NotyfyingService from '@/services/NotifyingService';
+import ConfirmDelete from '@/components/ConfirmDelete';
+
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
-        CreateOrEditVacationRequest
+        'create-or-edit-vacation-request': CreateOrEditVacationRequest,
+        'confirm-delete': ConfirmDelete
     },
     data() {
         return {
@@ -93,30 +100,57 @@ export default {
                 }
             },
 
-            isShown: false,
-            selectedItem: null
+            showCreateOrEditModal: false,
+            showConfirmDelete: false,
+            vacationRequestToDeleteId: null,
+            selectedItem: null,
+            resourceName: 'vacation request'
         };
     },
     computed: {
-        ...mapGetters({ loggedUser: 'loggedUser', contracts: 'getContracts', vacationRequests: 'getVacationRequests' })
+        ...mapGetters(['loggedUser', 'contracts', 'vacationRequests'])
     },
     methods: {
-        ...mapActions(['fetchContracts', 'fetchVacationRequests']),
+        ...mapActions(['fetchContracts', 'fetchVacationRequests', 'deleteVacationRequest']),
 
-        openModal(selectedItem) {
-            if (this.canBeOpened(selectedItem)) {
+        openCreateOrEdit(selectedItem = null) {
+            if (this.isCreateModeOrPendingRequest(selectedItem)) {
                 this.selectedItem = selectedItem;
-                this.isShown = true;
+                this.showCreateOrEditModal = true;
+            } else {
+                NotyfyingService.noEditAccess();
             }
         },
 
-        closeModal() {
+        closeCreateOrEdit() {
             this.selectedItem = null;
-            this.isShown = false;
+            this.showCreateOrEditModal = false;
         },
 
-        canBeOpened(selectedItem) {
+        openConfirmDelete(vacationRequest) {
+            this.vacationRequestToDeleteId = vacationRequest.id;
+            this.showConfirmDelete = true;
+        },
+
+        isCreateModeOrPendingRequest(selectedItem) {
+            // !selectedItem mean that user clicked on new vacation request button
+
             return !selectedItem || selectedItem.status === 'pending';
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteVacationRequest(this.vacationRequestToDeleteId);
+
+                this.vacationRequestToDeleteId = null;
+                this.showConfirmDelete = false;
+
+                NotyfyingService.deleted(this.resourceName);
+            } catch (error) {
+                NotyfyingService.handleError(error);
+
+                console.error(error);
+            }
         }
     },
     created() {
@@ -124,10 +158,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-h2 {
-    text-align: center;
-    padding: 20px;
-}
-</style>

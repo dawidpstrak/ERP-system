@@ -7,7 +7,7 @@ const state = () => {
 };
 
 const getters = {
-    getVacationRequests: state => state.vacationRequests
+    vacationRequests: state => state.vacationRequests
 };
 
 const mutations = {

@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Contracts</v-card-title>
-                <v-btn class="mr-6" outlined color="primary" @click="openModal()">
+                <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>contract
                 </v-btn>
             </v-card>
@@ -17,16 +17,24 @@
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">
-                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
-                    <v-icon small color="error">mdi-delete</v-icon>
+                    <v-icon small color="primary" class="mr-2" @click="openCreateOrEdit(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error" @click="openConfirmDelete(item)">mdi-delete</v-icon>
                 </template>
             </v-data-table>
 
             <create-or-edit-contract
-                v-if="isShown"
-                :isShown="isShown"
+                v-if="showCreateOrEditModal"
+                :showCreateOrEditModal="showCreateOrEditModal"
                 :selectedItem="selectedItem"
-                @closeModal="closeModal"
+                @closeModal="closeCreateOrEdit"
+            />
+
+            <confirm-delete
+                v-if="showConfirmDelete"
+                :resourceName="resourceName"
+                :showConfirmDelete="showConfirmDelete"
+                @canceled="showConfirmDelete = false"
+                @confirmed="onDelete"
             />
         </v-card>
     </v-container>
@@ -34,17 +42,21 @@
 
 <script>
 import CreateOrEditContract from '../components/CreateOrEditContract';
+import ConfirmDelete from '@/components/ConfirmDelete';
+import NotyfyingService from '@/services/NotifyingService';
+
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
-        'create-or-edit-contract': CreateOrEditContract
+        'create-or-edit-contract': CreateOrEditContract,
+        'confirm-delete': ConfirmDelete
     },
     data() {
         return {
             headers: [
-                { text: 'Name', align: 'center', value: 'user.firstName', sortable: false },
-                { text: 'Surname', align: 'center', value: 'user.lastName', sortable: false },
+                { text: 'Employee name', align: 'center', value: 'user.firstName', sortable: false },
+                { text: 'Employee surname', align: 'center', value: 'user.lastName', sortable: false },
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
                 { text: 'Duration', align: 'center', value: 'duration', sortable: false },
@@ -54,22 +66,47 @@ export default {
             footerProps: {
                 itemsPerPageText: 'Contracts per page'
             },
-            isShown: false,
-            selectedItem: null
+            showCreateOrEditModal: false,
+            showConfirmDelete: false,
+            contractToDeleteId: null,
+            selectedItem: null,
+            resourceName: 'contract'
         };
     },
     computed: {
-        ...mapGetters({ contracts: 'getContracts' })
+        ...mapGetters(['contracts'])
     },
     methods: {
-        ...mapActions(['fetchContracts']),
-        openModal(selectedItem) {
-            this.isShown = true;
+        ...mapActions(['fetchContracts', 'deleteContract']),
+
+        openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;
+            this.showCreateOrEditModal = true;
         },
-        closeModal() {
-            this.isShown = false;
+
+        closeCreateOrEdit() {
             this.selectedItem = null;
+            this.showCreateOrEditModal = false;
+        },
+
+        openConfirmDelete(contract) {
+            this.contractToDeleteId = contract.id;
+            this.showConfirmDelete = true;
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteContract(this.contractToDeleteId);
+
+                this.contractToDeleteId = null;
+                this.showConfirmDelete = false;
+
+                NotyfyingService.deleted(this.resourceName);
+            } catch (error) {
+                NotyfyingService.handleError(error);
+
+                console.error(error);
+            }
         }
     },
     created() {

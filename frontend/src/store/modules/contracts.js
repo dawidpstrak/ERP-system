@@ -7,7 +7,7 @@ const state = () => {
 };
 
 const getters = {
-    getContracts: state => state.contracts
+    contracts: state => state.contracts
 };
 
 const mutations = {

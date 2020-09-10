@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="showModal" width="400" persistent>
+    <v-dialog v-model="isModalShown" width="400" persistent>
         <v-form class="pa-10 white " @submit.prevent="submit">
             <button class="exit-btn" @click="onClose">
                 <v-icon>{{ 'mdi-location-exit' }}</v-icon>
@@ -64,23 +64,23 @@
                 <v-date-picker v-model="formData.birthDate" no-title />
             </v-menu>
 
-            <v-btn class="mr-4" type="submit">submit</v-btn>
-
-            <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Dismiss</v-btn>
+            <v-card-actions class="d-flex justify-center">
+                <v-btn text color="primary" type="submit">submit</v-btn>
+            </v-card-actions>
         </v-form>
     </v-dialog>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import createOrEditValidator from '@/validators/users/createOrEditValidator.mixin';
-
 import NotifyingService from '@/services/NotifyingService';
+
+import { mapActions } from 'vuex';
 
 export default {
     props: {
         selectedItem: Object,
-        isShown: Boolean
+        showCreateOrEditModal: Boolean
     },
 
     mixins: [createOrEditValidator],
@@ -101,7 +101,8 @@ export default {
             },
             formData: {},
             showPassword: false,
-            showModal: this.isShown
+            isModalShown: this.showCreateOrEditModal,
+            resourceName: 'user'
         };
     },
 
@@ -118,28 +119,18 @@ export default {
                 return;
             }
 
-            this.onClose();
-
             try {
                 await this.saveEmployee(this.formData);
 
-                this.formData.id ? NotifyingService.updated('employee') : NotifyingService.created('employee');
+                this.onClose();
+
+                this.formData.id
+                    ? NotifyingService.updated(this.resourceName)
+                    : NotifyingService.created(this.resourceName);
             } catch (error) {
                 if (!this.checkForServerFormErrors(error)) {
                     NotifyingService.handleError(error);
                 }
-
-                console.error(error);
-            }
-        },
-
-        async onDelete() {
-            try {
-                await this.deleteEmployee(this.formData.id);
-
-                NotifyingService.deleted('employee');
-            } catch (error) {
-                NotifyingService.handleError(error);
 
                 console.error(error);
             }
@@ -150,6 +141,7 @@ export default {
         },
 
         onClose() {
+            this.showConfirmDelete = false;
             this.$emit('closeModal');
         },
 

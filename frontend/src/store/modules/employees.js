@@ -7,7 +7,7 @@ const state = () => {
 };
 
 const getters = {
-    getEmployees: state => state.employees
+    employees: state => state.employees
 };
 
 const mutations = {

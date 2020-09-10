@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="showModal" width="400" persistent>
+    <v-dialog v-model="isModalShown" width="400" persistent>
         <v-form class="pa-10 white" @submit.prevent="submit">
             <button class="exit-btn" @click="onClose">
                 <v-icon>{{ 'mdi-location-exit' }}</v-icon>
@@ -54,29 +54,24 @@
                 @keyup="clearServerErrors('vacationsPerYear')"
             />
 
-            <v-container>
-                <v-btn class="mr-4" type="submit">submit</v-btn>
-
-                <v-btn v-if="isCreateModal()" @click="setDefaultFormData">reset</v-btn>
-
-                <v-btn v-if="!isCreateModal()" class="ml-10" depressed color="error" @click="onDelete">Delete</v-btn>
-            </v-container>
+            <v-card-actions class="d-flex justify-center">
+                <v-btn text color="primary" type="submit">submit</v-btn>
+            </v-card-actions>
         </v-form>
     </v-dialog>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import createOrEditValidator from '@/validators/contracts/createOrEditValidator.mixin';
-
+import NotifyingService from '@/services/NotifyingService';
 import moment from 'moment';
 
-import NotifyingService from '@/services/NotifyingService';
+import { mapActions } from 'vuex';
 
 export default {
     props: {
         selectedItem: Object,
-        isShown: Boolean
+        showCreateOrEditModal: Boolean
     },
 
     mixins: [createOrEditValidator],
@@ -94,7 +89,8 @@ export default {
             formData: {},
             durationOptions: [1, 3, 6, 12],
             vacationsPerYearOptions: [20, 26],
-            showModal: this.isShown
+            isModalShown: this.showCreateOrEditModal,
+            resourceName: 'contract'
         };
     },
 
@@ -116,23 +112,15 @@ export default {
             try {
                 await this.saveContract(this.formData);
 
-                this.formData.id ? NotifyingService.updated('contract') : NotifyingService.created('contract');
+                this.onClose();
+
+                this.formData.id
+                    ? NotifyingService.updated(this.resourceName)
+                    : NotifyingService.created(this.resourceName);
             } catch (error) {
                 if (!this.checkForServerFormErrors(error)) {
                     NotifyingService.handleError(error);
                 }
-
-                console.error(error);
-            }
-        },
-
-        async onDelete() {
-            try {
-                await this.deleteContract(this.formData.id);
-
-                NotifyingService.deleted('contract');
-            } catch (error) {
-                NotifyingService.handleError(error);
 
                 console.error(error);
             }

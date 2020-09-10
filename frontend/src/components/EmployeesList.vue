@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Employees</v-card-title>
-                <v-btn outlined color="primary" class="mr-6" @click="openModal()">
+                <v-btn outlined color="primary" class="mr-6" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>employee
                 </v-btn>
             </v-card>
@@ -16,27 +16,41 @@
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">
-                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
-                    <v-icon small color="error">mdi-delete</v-icon>
+                    <v-icon small color="primary" class="mr-2" @click="openCreateOrEdit(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error" @click="openConfirmDelete(item)">mdi-delete</v-icon>
                 </template>
             </v-data-table>
 
             <create-or-edit-employee
-                v-if="isShown"
-                :isShown="isShown"
+                v-if="showCreateOrEditModal"
+                :showCreateOrEditModal="showCreateOrEditModal"
                 :selectedItem="selectedItem"
-                @closeModal="closeModal"
+                @closeModal="closeCreateOrEdit"
+            />
+
+            <confirm-delete
+                v-if="showConfirmDelete"
+                :resourceName="resourceName"
+                :showConfirmDelete="showConfirmDelete"
+                @canceled="showConfirmDelete = false"
+                @confirmed="onDelete"
             />
         </v-card>
     </v-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
 import CreateOrEditEmployee from './CreateOrEditEmployee';
+import ConfirmDelete from '@/components/ConfirmDelete';
+import NotyfyingService from '@/services/NotifyingService';
+
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    components: { 'create-or-edit-employee': CreateOrEditEmployee },
+    components: {
+        'create-or-edit-employee': CreateOrEditEmployee,
+        'confirm-delete': ConfirmDelete
+    },
     data() {
         return {
             headers: [
@@ -55,24 +69,48 @@ export default {
             footerProps: {
                 itemsPerPageText: 'Employees per page'
             },
-            isShown: false,
-            selectedItem: null
+            resourceName: 'user',
+            showCreateOrEditModal: false,
+            showConfirmDelete: false,
+            selectedItem: null,
+            employeeToDeleteId: null
         };
     },
     methods: {
-        ...mapActions(['fetchEmployees']),
-        openModal(selectedItem) {
+        ...mapActions(['fetchEmployees', 'deleteEmployee']),
+
+        openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;
-            this.isShown = true;
+            this.showCreateOrEditModal = true;
         },
 
-        closeModal() {
+        closeCreateOrEdit() {
             this.selectedItem = null;
-            this.isShown = false;
+            this.showCreateOrEditModal = false;
+        },
+
+        openConfirmDelete(employee) {
+            this.employeeToDeleteId = employee.id;
+            this.showConfirmDelete = true;
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteEmployee(this.employeeToDeleteId);
+
+                this.employeeToDeleteId = null;
+                this.showConfirmDelete = false;
+
+                NotyfyingService.deleted(this.resourceName);
+            } catch (error) {
+                NotyfyingService.handleError(error);
+
+                console.error(error);
+            }
         }
     },
     computed: {
-        ...mapGetters({ employees: 'getEmployees' })
+        ...mapGetters(['employees'])
     },
     created() {
         this.fetchEmployees();

@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Vacation requests</v-card-title>
-                <v-btn class="mr-6" outlined color="primary" @click="openModal()">
+                <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>Vacation Requests
                 </v-btn>
             </v-card>
@@ -18,28 +18,40 @@
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">
-                    <v-icon small color="primary" class="mr-2" @click="openModal(item)">mdi-pencil</v-icon>
-                    <v-icon small color="error">mdi-delete</v-icon>
+                    <v-icon small color="primary" class="mr-2" @click="openCreateOrEdit(item)">mdi-pencil</v-icon>
+                    <v-icon small color="error" @click="openConfirmDelete(item)">mdi-delete</v-icon>
                 </template>
             </v-data-table>
 
             <create-or-edit-vacation-request
-                v-if="isShown"
-                :isShown="isShown"
+                v-if="showCreateOrEditModal"
+                :showCreateOrEditModal="showCreateOrEditModal"
                 :selectedItem="selectedItem"
-                @closeModal="closeModal"
+                @closeModal="closeCreateOrEdit()"
+            />
+
+            <confirm-delete
+                v-if="showConfirmDelete"
+                :resourceName="resourceName"
+                :showConfirmDelete="showConfirmDelete"
+                @canceled="showConfirmDelete = false"
+                @confirmed="onDelete"
             />
         </v-card>
     </v-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
 import CreateOrEditVacationRequest from '@/components/CreateOrEditVacationRequest.vue';
+import NotyfyingService from '@/services/NotifyingService';
+import ConfirmDelete from '@/components/ConfirmDelete';
+
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     components: {
-        'create-or-edit-vacation-request': CreateOrEditVacationRequest
+        'create-or-edit-vacation-request': CreateOrEditVacationRequest,
+        'confirm-delete': ConfirmDelete
     },
     data() {
         return {
@@ -57,25 +69,50 @@ export default {
                     itemsPerPageText: 'Vacation requests per page'
                 }
             },
-            isShown: false,
-            selectedItem: null
+            showCreateOrEditModal: false,
+            showConfirmDelete: false,
+            selectedItem: null,
+            vacationRequestToDeleteId: null,
+            resourceName: 'vacation request'
         };
     },
     computed: {
-        ...mapGetters({ vacationRequests: 'getVacationRequests' })
+        ...mapGetters(['vacationRequests'])
     },
     created() {
         this.fetchVacationRequests();
     },
     methods: {
-        ...mapActions(['fetchVacationRequests']),
-        openModal(selectedItem) {
-            this.isShown = true;
+        ...mapActions(['fetchVacationRequests', 'deleteVacationRequest']),
+
+        openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;
+            this.showCreateOrEditModal = true;
         },
-        closeModal() {
-            this.isShown = false;
+
+        closeCreateOrEdit() {
             this.selectedItem = null;
+            this.showCreateOrEditModal = false;
+        },
+
+        openConfirmDelete(vacationRequest) {
+            this.vacationRequestToDeleteId = vacationRequest.id;
+            this.showConfirmDelete = true;
+        },
+
+        async onDelete() {
+            try {
+                await this.deleteVacationRequest(this.vacationRequestToDeleteId);
+
+                this.vacationRequestToDeleteId = null;
+                this.showConfirmDelete = false;
+
+                NotyfyingService.deleted(this.resourceName);
+            } catch (error) {
+                NotyfyingService.handleError(error);
+
+                console.error(error);
+            }
         }
     }
 };
