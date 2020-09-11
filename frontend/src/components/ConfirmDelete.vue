@@ -1,9 +1,11 @@
 <template>
     <v-dialog v-model="showConfirmDelete" width="400" persistent>
         <v-card>
-            <v-card-title class="headline grey lighten-2">
+            <v-card-title>
                 Are you sure ?
             </v-card-title>
+
+            <v-divider />
 
             <v-card-text class="mt-6"> Are you sure you wanna delete this {{ resourceName }} ?</v-card-text>
 
@@ -11,10 +13,10 @@
 
             <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary" text @click="onCancel">
+                <v-btn color="primary" outlined @click="onCancel">
                     cancel
                 </v-btn>
-                <v-btn color="error" text @click="onConfirm">
+                <v-btn color="error" outlined @click="onConfirm">
                     confirm
                 </v-btn>
             </v-card-actions>

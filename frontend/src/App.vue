@@ -6,13 +6,7 @@
             <router-view />
         </transition>
 
-        <notifications
-            classes="vue-notification"
-            position="bottom center"
-            :duration="5000"
-            width="400"
-            :ignoreDuplicates="true"
-        />
+        <notifications classes="vue-notification" position="bottom center" :duration="5000" :ignoreDuplicates="true" />
     </v-app>
 </template>
 
@@ -30,37 +24,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-#app .v-application--wrap {
-    flex-direction: row;
-    .spacer {
-        // place for navigation with absolute position
-        margin-left: 200px;
-    }
-}
-
-.fade-enter {
-    opacity: 0;
-}
-
-.fade-enter-active {
-    transition: opacity 0.3s;
-}
-
-.fade-leave-active {
-    transition: opacity 0.3s;
-    opacity: 0;
-}
-
-.vue-notification {
-    height: 90px;
-
-    .notification-title {
-        font-size: 17px;
-    }
-    .notification-content {
-        font-size: 13px;
-    }
-}
-</style>

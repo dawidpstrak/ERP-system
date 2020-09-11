@@ -21,7 +21,7 @@
             <v-card>
                 <v-card class="d-flex align-center justify-space-between" outlined>
                     <v-card-title class="ml-6"
-                        >Your vacations ({{ loggedUser.availableDaysOffAmount }} days left)</v-card-title
+                        >Your vacations ({{ loggedUser.availableDaysOffAmount }} available days)</v-card-title
                     >
                     <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
                         <v-icon left>mdi-plus</v-icon>vacation

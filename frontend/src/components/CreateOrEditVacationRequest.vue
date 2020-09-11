@@ -1,73 +1,88 @@
 <template>
-    <v-dialog v-model="isModalShown" width="400" persistent>
-        <v-form class="pa-10 white" @submit.prevent="submit">
-            <button class="exit-btn" @click="onClose">
-                <v-icon>{{ 'mdi-location-exit' }}</v-icon>
-            </button>
+    <v-dialog v-model="isModalShown" width="350" persistent>
+        <v-card>
+            <v-form @submit.prevent="submit">
+                <v-card-title class="d-flex justify-space-between px-6"
+                    >{{ formTitle() }}
+                    <v-btn icon @click="onClose">
+                        <v-icon>{{ 'mdi-location-exit' }}</v-icon>
+                    </v-btn>
+                </v-card-title>
 
-            <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
-
-            <v-text-field
-                v-if="isAdmin && isCreateModal()"
-                v-model="formData.email"
-                :error-messages="emailErrors"
-                label="Employee email"
-                @input="$v.formData.email.$touch()"
-                @blur="$v.formData.email.$touch()"
-                @keyup="clearServerErrors('email')"
-            />
-
-            <v-select
-                v-if="isAdmin"
-                v-model="formData.status"
-                label="Set request status"
-                :items="requestStatuses"
-                :error-messages="statusErrors"
-                @input="$v.formData.status.$touch()"
-                @blur="$v.formData.status.$touch()"
-                @keyup="clearServerErrors('status')"
-            />
-
-            <v-menu :nudge-right="40" :close-on-content-click="false" min-width="none" transition="scale-transition">
-                <template v-slot:activator="{ on }">
+                <div class="px-6">
                     <v-text-field
-                        class="mb-2"
-                        label="Start date"
-                        :error-messages="startDateErrors"
-                        :value="formData.startDate"
-                        readonly
-                        v-on="on"
-                        @input="$v.formData.startDate.$touch()"
-                        @blur="$v.formData.startDate.$touch()"
-                        @keyup="clearServerErrors('startDate')"
+                        v-if="isAdmin && isCreateModal()"
+                        v-model="formData.email"
+                        :error-messages="emailErrors"
+                        label="Employee email"
+                        @input="$v.formData.email.$touch()"
+                        @blur="$v.formData.email.$touch()"
+                        @keyup="clearServerErrors('email')"
                     />
-                </template>
 
-                <v-date-picker v-model="formData.startDate" no-title />
-            </v-menu>
-
-            <v-menu :nudge-right="40" :close-on-content-click="false" min-width="none" transition="scale-transition">
-                <template v-slot:activator="{ on }">
-                    <v-text-field
-                        class="mb-2"
-                        label="End date"
-                        :error-messages="endDateErrors"
-                        :value="formData.endDate"
-                        readonly
-                        v-on="on"
-                        @input="$v.formData.endDate.$touch()"
-                        @blur="$v.formData.endDate.$touch()"
-                        @keyup="clearServerErrors('endDate')"
+                    <v-select
+                        v-if="isAdmin"
+                        v-model="formData.status"
+                        label="Set request status"
+                        :items="requestStatuses"
+                        :error-messages="statusErrors"
+                        @input="$v.formData.status.$touch()"
+                        @blur="$v.formData.status.$touch()"
+                        @keyup="clearServerErrors('status')"
                     />
-                </template>
 
-                <v-date-picker v-model="formData.endDate" no-title />
-            </v-menu>
+                    <v-menu
+                        :nudge-right="40"
+                        :close-on-content-click="false"
+                        min-width="none"
+                        transition="scale-transition"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                class="mb-2"
+                                label="Start date"
+                                :error-messages="startDateErrors"
+                                :value="formData.startDate"
+                                readonly
+                                v-on="on"
+                                @input="$v.formData.startDate.$touch()"
+                                @blur="$v.formData.startDate.$touch()"
+                                @keyup="clearServerErrors('startDate')"
+                            />
+                        </template>
 
-            <v-card-actions class="d-flex justify-center">
-                <v-btn text color="primary" type="submit">submit</v-btn>
-            </v-card-actions>
-        </v-form>
+                        <v-date-picker v-model="formData.startDate" no-title />
+                    </v-menu>
+
+                    <v-menu
+                        :nudge-right="40"
+                        :close-on-content-click="false"
+                        min-width="none"
+                        transition="scale-transition"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                class="mb-2"
+                                label="End date"
+                                :error-messages="endDateErrors"
+                                :value="formData.endDate"
+                                readonly
+                                v-on="on"
+                                @input="$v.formData.endDate.$touch()"
+                                @blur="$v.formData.endDate.$touch()"
+                                @keyup="clearServerErrors('endDate')"
+                            />
+                        </template>
+
+                        <v-date-picker v-model="formData.endDate" no-title />
+                    </v-menu>
+
+                    <v-card-actions class="d-flex justify-center">
+                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                    </v-card-actions>
+                </div>
+            </v-form>
+        </v-card>
     </v-dialog>
 </template>
 

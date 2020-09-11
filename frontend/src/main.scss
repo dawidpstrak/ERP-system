@@ -1,0 +1,62 @@
+@media (max-width: 990px) {
+    #app div.v-data-table__wrapper table thead tr {
+        display: none;
+    }
+}
+
+@media (max-width: 800px) {
+    #app .v-card {
+        flex-direction: column;
+        .ml-6 {
+            margin-left: 0 !important;
+        }
+        .mr-6 {
+            margin: 0 0 16px 0 !important;
+        }
+    }
+}
+
+#app .v-application--wrap {
+    flex-direction: row;
+    .spacer {
+        // .spacer - place for navigation with absolute position
+        margin-left: 200px;
+        @media (max-width: 700px) {
+            margin-left: 56px;
+        }
+    }
+}
+
+.mobile-display-none {
+    @media (max-width: 700px) {
+        display: none;
+    }
+}
+
+// between routes transition
+
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    transition: opacity 0.3s;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+
+// some notifications custom styles
+
+.vue-notification {
+    height: 90px;
+
+    .notification-title {
+        font-size: 17px;
+    }
+    .notification-content {
+        font-size: 13px;
+    }
+}

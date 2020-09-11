@@ -59,7 +59,7 @@ export default {
                 { text: 'Employee surname', align: 'center', value: 'user.lastName', sortable: false },
                 { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
                 { text: 'End date', align: 'center', value: 'endDate', sortable: false },
-                { text: 'Duration', align: 'center', value: 'duration', sortable: false },
+                { text: 'Duration/months', align: 'center', value: 'duration', sortable: false },
                 { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false },
                 { text: 'Actions', value: 'actions', sortable: false }
             ],

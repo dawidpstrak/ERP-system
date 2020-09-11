@@ -1,63 +1,68 @@
 <template>
-    <v-dialog v-model="isModalShown" width="400" persistent>
-        <v-form class="pa-10 white" @submit.prevent="submit">
-            <button class="exit-btn" @click="onClose">
-                <v-icon>{{ 'mdi-location-exit' }}</v-icon>
-            </button>
+    <v-dialog v-model="isModalShown" width="350" persistent>
+        <v-card>
+            <v-form @submit.prevent="submit">
+                <v-card-title class="d-flex justify-space-between px-6"
+                    >{{ formTitle() }}
+                    <v-btn icon @click="onClose">
+                        <v-icon>{{ 'mdi-location-exit' }}</v-icon>
+                    </v-btn>
+                </v-card-title>
 
-            <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
-
-            <v-text-field
-                v-model="formData.email"
-                :error-messages="emailErrors"
-                label="Employee email"
-                @input="$v.formData.email.$touch()"
-                @blur="$v.formData.email.$touch()"
-                @keyup="clearServerErrors('email')"
-            />
-
-            <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
-                <template v-slot:activator="{ on }">
+                <div class="px-6">
                     <v-text-field
-                        class="mb-2"
-                        label="Start date"
-                        :error-messages="startDateErrors"
-                        :value="formData.startDate"
-                        readonly
-                        v-on="on"
-                        @input="$v.formData.startDate.$touch()"
-                        @blur="$v.formData.startDate.$touch()"
-                        @keyup="clearServerErrors('startDate')"
+                        v-model="formData.email"
+                        :error-messages="emailErrors"
+                        label="Employee email"
+                        @input="$v.formData.email.$touch()"
+                        @blur="$v.formData.email.$touch()"
+                        @keyup="clearServerErrors('email')"
                     />
-                </template>
 
-                <v-date-picker v-model="formData.startDate" no-title />
-            </v-menu>
+                    <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                class="mb-2"
+                                label="Start date"
+                                :error-messages="startDateErrors"
+                                :value="formData.startDate"
+                                readonly
+                                v-on="on"
+                                @input="$v.formData.startDate.$touch()"
+                                @blur="$v.formData.startDate.$touch()"
+                                @keyup="clearServerErrors('startDate')"
+                            />
+                        </template>
 
-            <v-select
-                v-model="formData.duration"
-                label="Duration in months"
-                :items="durationOptions"
-                :error-messages="durationErrors"
-                @input="$v.formData.duration.$touch()"
-                @blur="$v.formData.duration.$touch()"
-                @keyup="clearServerErrors('duration')"
-            />
+                        <v-date-picker v-model="formData.startDate" no-title />
+                    </v-menu>
 
-            <v-select
-                v-model="formData.vacationsPerYear"
-                label="Vacation days per year"
-                :items="vacationsPerYearOptions"
-                :error-messages="vacationsPerYearErrors"
-                @input="$v.formData.vacationsPerYear.$touch()"
-                @blur="$v.formData.vacationsPerYear.$touch()"
-                @keyup="clearServerErrors('vacationsPerYear')"
-            />
+                    <v-select
+                        v-model="formData.duration"
+                        label="Duration in months"
+                        :items="durationOptions"
+                        :error-messages="durationErrors"
+                        @input="$v.formData.duration.$touch()"
+                        @blur="$v.formData.duration.$touch()"
+                        @keyup="clearServerErrors('duration')"
+                    />
 
-            <v-card-actions class="d-flex justify-center">
-                <v-btn text color="primary" type="submit">submit</v-btn>
-            </v-card-actions>
-        </v-form>
+                    <v-select
+                        v-model="formData.vacationsPerYear"
+                        label="Vacation days per year"
+                        :items="vacationsPerYearOptions"
+                        :error-messages="vacationsPerYearErrors"
+                        @input="$v.formData.vacationsPerYear.$touch()"
+                        @blur="$v.formData.vacationsPerYear.$touch()"
+                        @keyup="clearServerErrors('vacationsPerYear')"
+                    />
+
+                    <v-card-actions class="d-flex justify-center">
+                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                    </v-card-actions>
+                </div>
+            </v-form>
+        </v-card>
     </v-dialog>
 </template>
 

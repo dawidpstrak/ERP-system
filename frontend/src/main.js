@@ -3,6 +3,7 @@ import App from './App.vue';
 import Vuetify from 'vuetify';
 import Notifications from 'vue-notification';
 import 'vuetify/dist/vuetify.min.css';
+import './main.scss';
 
 import store from './store/store';
 import router from './router/router';

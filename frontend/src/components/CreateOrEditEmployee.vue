@@ -1,73 +1,78 @@
 <template>
-    <v-dialog v-model="isModalShown" width="400" persistent>
-        <v-form class="pa-10 white " @submit.prevent="submit">
-            <button class="exit-btn" @click="onClose">
-                <v-icon>{{ 'mdi-location-exit' }}</v-icon>
-            </button>
+    <v-dialog v-model="isModalShown" width="350" persistent>
+        <v-card>
+            <v-form @submit.prevent="submit">
+                <v-card-title class="d-flex justify-space-between px-6"
+                    >{{ formTitle() }}
+                    <v-btn icon @click="onClose">
+                        <v-icon>{{ 'mdi-location-exit' }}</v-icon>
+                    </v-btn>
+                </v-card-title>
 
-            <v-toolbar-title class="mb-6 text-h4" align="center">{{ formTitle() }}</v-toolbar-title>
-
-            <v-text-field
-                v-model="formData.firstName"
-                :error-messages="firstNameErrors"
-                label="First name"
-                @input="$v.formData.firstName.$touch()"
-                @blur="$v.formData.firstName.$touch()"
-                @keyup="clearServerErrors('firstName')"
-            />
-
-            <v-text-field
-                v-model="formData.lastName"
-                :error-messages="lastNameErrors"
-                label="Last name"
-                @input="$v.formData.lastName.$touch()"
-                @blur="$v.formData.lastName.$touch()"
-                @keyup="clearServerErrors('lastName')"
-            />
-
-            <v-text-field
-                v-model="formData.email"
-                :error-messages="emailErrors"
-                label="Email"
-                @input="$v.formData.email.$touch()"
-                @blur="$v.formData.email.$touch()"
-                @keyup="clearServerErrors('email')"
-            />
-
-            <v-text-field
-                v-if="isCreateModal()"
-                v-model="formData.password"
-                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :error-messages="passwordErrors"
-                :type="showPassword ? 'text' : 'password'"
-                label="Password"
-                @click:append="showPassword = !showPassword"
-                @input="$v.formData.password.$touch()"
-                @blur="$v.formData.password.$touch()"
-                @keyup="clearServerErrors('password')"
-            />
-
-            <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
-                <template v-slot:activator="{ on }">
+                <div class="px-6">
                     <v-text-field
-                        class="mb-2"
-                        label="Birth Date"
-                        :error-messages="birthDateErrors"
-                        :value="formData.birthDate"
-                        readonly
-                        v-on="on"
-                        @input="$v.formData.birthDate.$touch()"
-                        @blur="$v.formData.birthDate.$touch()"
-                        @keyup="clearServerErrors('birthDate')"
+                        v-model="formData.firstName"
+                        :error-messages="firstNameErrors"
+                        label="First name"
+                        @input="$v.formData.firstName.$touch()"
+                        @blur="$v.formData.firstName.$touch()"
+                        @keyup="clearServerErrors('firstName')"
                     />
-                </template>
-                <v-date-picker v-model="formData.birthDate" no-title />
-            </v-menu>
 
-            <v-card-actions class="d-flex justify-center">
-                <v-btn text color="primary" type="submit">submit</v-btn>
-            </v-card-actions>
-        </v-form>
+                    <v-text-field
+                        v-model="formData.lastName"
+                        :error-messages="lastNameErrors"
+                        label="Last name"
+                        @input="$v.formData.lastName.$touch()"
+                        @blur="$v.formData.lastName.$touch()"
+                        @keyup="clearServerErrors('lastName')"
+                    />
+
+                    <v-text-field
+                        v-model="formData.email"
+                        :error-messages="emailErrors"
+                        label="Email"
+                        @input="$v.formData.email.$touch()"
+                        @blur="$v.formData.email.$touch()"
+                        @keyup="clearServerErrors('email')"
+                    />
+
+                    <v-text-field
+                        v-if="isCreateModal()"
+                        v-model="formData.password"
+                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        :error-messages="passwordErrors"
+                        :type="showPassword ? 'text' : 'password'"
+                        label="Password"
+                        @click:append="showPassword = !showPassword"
+                        @input="$v.formData.password.$touch()"
+                        @blur="$v.formData.password.$touch()"
+                        @keyup="clearServerErrors('password')"
+                    />
+
+                    <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                class="mb-2"
+                                label="Birth Date"
+                                :error-messages="birthDateErrors"
+                                :value="formData.birthDate"
+                                readonly
+                                v-on="on"
+                                @input="$v.formData.birthDate.$touch()"
+                                @blur="$v.formData.birthDate.$touch()"
+                                @keyup="clearServerErrors('birthDate')"
+                            />
+                        </template>
+                        <v-date-picker v-model="formData.birthDate" no-title />
+                    </v-menu>
+
+                    <v-card-actions class="d-flex justify-center">
+                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                    </v-card-actions>
+                </div>
+            </v-form>
+        </v-card>
     </v-dialog>
 </template>
 
@@ -159,14 +164,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-form {
-    position: relative;
-}
-.exit-btn {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-</style>
