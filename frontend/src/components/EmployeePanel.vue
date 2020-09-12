@@ -114,11 +114,11 @@ export default {
         ...mapActions(['fetchContracts', 'fetchVacationRequests', 'deleteVacationRequest']),
 
         openCreateOrEdit(selectedItem = null) {
-            if (this.isCreateModeOrPendingRequest(selectedItem)) {
+            if (this.canBeEdited(selectedItem)) {
                 this.selectedItem = selectedItem;
                 this.showCreateOrEditModal = true;
             } else {
-                NotyfyingService.noEditAccess();
+                NotyfyingService.noAccessRights();
             }
         },
 
@@ -128,14 +128,22 @@ export default {
         },
 
         openConfirmDelete(vacationRequest) {
-            this.vacationRequestToDeleteId = vacationRequest.id;
-            this.showConfirmDelete = true;
+            if (this.canBeDeleted(vacationRequest)) {
+                this.vacationRequestToDeleteId = vacationRequest.id;
+                this.showConfirmDelete = true;
+            } else {
+                NotyfyingService.noAccessRights();
+            }
         },
 
-        isCreateModeOrPendingRequest(selectedItem) {
+        canBeEdited(selectedItem) {
             // !selectedItem mean that user clicked on new vacation request button
 
             return !selectedItem || selectedItem.status === 'pending';
+        },
+
+        canBeDeleted(vacationRequest) {
+            return vacationRequest.status === 'pending';
         },
 
         async onDelete() {

@@ -1,5 +1,4 @@
 import { validationMixin } from 'vuelidate';
-import camelCaseToSeparatedString from '../utils/camelCaseToSeparatedString';
 import HTTP from 'http-status-codes';
 
 export default {
@@ -49,9 +48,7 @@ export default {
                 return errors;
             }
 
-            const separatedInputName = camelCaseToSeparatedString(inputName);
-
-            !input.required && errors.push(separatedInputName + ' field is required');
+            !input.required && errors.push('field is required');
 
             return errors;
         },

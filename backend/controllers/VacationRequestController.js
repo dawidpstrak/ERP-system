@@ -38,26 +38,26 @@ class VacationRequestController {
 
     async store(req, res) {
         try {
-            const { startDate, endDate, email, status } = req.body;
-            const { id: userId, isAdmin } = req.loggedUser;
+            const { userId, startDate, endDate, status } = req.body;
+            const { id: loggedUserId, isAdmin } = req.loggedUser;
 
             let user;
 
             if (isAdmin) {
-                user = await this.userRepository.findByEmail(email);
-            } else {
                 user = await this.userRepository.findByPk(userId);
+            } else {
+                user = await this.userRepository.findByPk(loggedUserId);
             }
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'Can not find this user' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
             }
 
             const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
 
             const newVacationRequest = await this.vacationRequestRepository.create({
                 ...req.body,
-                userId: isAdmin ? user.id : userId,
+                userId: isAdmin ? userId : loggedUserId,
                 status: isAdmin ? status : VacationRequest.PENDING,
                 requestedDaysOff
             });
@@ -81,10 +81,10 @@ class VacationRequestController {
                 return res.sendStatus(HTTP.FORBIDDEN);
             }
 
-            const user = await this.userRepository.findByUserIdAndVacationRequestId(userId, vacationRequestId);
+            const user = await this.userRepository.findByPk(userId);
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'Vacation request belongs to other user' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
             }
 
             const vacationRequest = await this.vacationRequestRepository.findByPk(vacationRequestId);
@@ -94,6 +94,19 @@ class VacationRequestController {
             }
 
             const previousRequestedDaysOff = vacationRequest.requestedDaysOff;
+
+            if (userId !== vacationRequest.userId) {
+                if (!isAdmin) {
+                    return res.sendStatus(HTTP.FORBIDDEN);
+                }
+
+                await this.userDaysOffAmountCalculator.onVacationRequestChangeOwner(
+                    vacationRequest.userId,
+                    user,
+                    previousRequestedDaysOff,
+                    vacationRequest
+                );
+            }
 
             const actualRequestedDaysOff = this.moment
                 .duration(this.moment(endDate).diff(this.moment(startDate)))
@@ -128,8 +141,13 @@ class VacationRequestController {
     async delete(req, res) {
         try {
             const { id } = req.params;
+            const { isAdmin } = req.loggedUser;
 
             const vacationRequest = await this.vacationRequestRepository.findByPk(id);
+
+            if (!isAdmin && vacationRequest.status !== VacationRequest.PENDING) {
+                return res.sendStatus(HTTP.FORBIDDEN);
+            }
 
             if (vacationRequest) {
                 await vacationRequest.destroy();

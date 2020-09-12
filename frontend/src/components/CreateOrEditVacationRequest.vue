@@ -10,14 +10,12 @@
                 </v-card-title>
 
                 <div class="px-6">
-                    <v-text-field
-                        v-if="isAdmin && isCreateModal()"
-                        v-model="formData.email"
-                        :error-messages="emailErrors"
-                        label="Employee email"
-                        @input="$v.formData.email.$touch()"
-                        @blur="$v.formData.email.$touch()"
-                        @keyup="clearServerErrors('email')"
+                    <user-search-input
+                        v-if="isAdmin"
+                        v-model="formData.userId"
+                        :userData="formData.user"
+                        :errorMessages="userIdErrors"
+                        @keyup="clearServerErrors('userId')"
                     />
 
                     <v-select
@@ -90,6 +88,7 @@
 import moment from 'moment';
 import createOrEditValidation from '@/validators/vacationRequests/createOrEditValidator.mixin';
 import NotifyingService from '@/services/NotifyingService';
+import UserSearchInput from './UserSearchInput';
 
 import { mapActions, mapGetters } from 'vuex';
 
@@ -101,10 +100,14 @@ export default {
 
     mixins: [createOrEditValidation],
 
+    components: {
+        'user-search-input': UserSearchInput
+    },
+
     data() {
         return {
             formData: {
-                email: '',
+                userId: null,
                 startDate: '',
                 endDate: '',
                 status: 'pending'
@@ -168,7 +171,9 @@ export default {
         },
 
         setEditData() {
-            this.formData = { ...this.selectedItem };
+            this.formData = {
+                ...this.selectedItem
+            };
         },
 
         isCreateModal() {

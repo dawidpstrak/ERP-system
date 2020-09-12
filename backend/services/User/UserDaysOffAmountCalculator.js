@@ -20,6 +20,18 @@ class UserDaysOffAmountCalculator {
         await user.update({ availableDaysOffAmount: newAvailableDaysOffAmount });
     }
 
+    async onContractChangeOwner(oldOwnerId, newOwner, contractDaysOff, contract) {
+        const oldOwner = await this.userRepository.findByPk(oldOwnerId);
+
+        const newOwnerDaysOffAmount = newOwner.availableDaysOffAmount + contractDaysOff;
+        const oldOwnerDaysOffAmount = oldOwner.availableDaysOffAmount - contractDaysOff;
+
+        await newOwner.update({ availableDaysOffAmount: newOwnerDaysOffAmount });
+        await oldOwner.update({ availableDaysOffAmount: oldOwnerDaysOffAmount });
+
+        await contract.update({ userId: newOwner.id });
+    }
+
     async onContractDelete(userId, contractAvailableDaysOffAmount) {
         const user = await this.userRepository.findByPk(userId);
 
@@ -42,6 +54,18 @@ class UserDaysOffAmountCalculator {
         const newAvailableDaysOffAmount = user.availableDaysOffAmount + oldRequestedDaysOff - newRequestedDaysOff;
 
         await user.update({ availableDaysOffAmount: newAvailableDaysOffAmount });
+    }
+
+    async onVacationRequestChangeOwner(oldOwnerId, newOwner, requestedDaysOff, vacationRequest) {
+        const oldOwner = await this.userRepository.findByPk(oldOwnerId);
+
+        const newOwnerDaysOffAmount = newOwner.availableDaysOffAmount - requestedDaysOff;
+        const oldOwnerDaysOffAmount = oldOwner.availableDaysOffAmount + requestedDaysOff;
+
+        await newOwner.update({ availableDaysOffAmount: newOwnerDaysOffAmount });
+        await oldOwner.update({ availableDaysOffAmount: oldOwnerDaysOffAmount });
+
+        await vacationRequest.update({ userId: newOwner.id });
     }
 
     async onVacationRequestDelete(userId, requestedDaysOff) {

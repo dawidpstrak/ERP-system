@@ -15,7 +15,22 @@ class UserController {
 
     async index(req, res) {
         try {
-            const employees = await this.userRepository.getAll();
+            const { query } = req.body;
+
+            const where = {};
+
+            if (query) {
+                where[Op.or] = {
+                    firstName: {
+                        [Op.like]: query + '%'
+                    },
+                    lastName: {
+                        [Op.like]: query + '%'
+                    }
+                };
+            }
+
+            const employees = await this.userRepository.getAll(where);
 
             return res.send(employees);
         } catch (error) {

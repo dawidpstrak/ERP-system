@@ -11,7 +11,7 @@ class ContractRepository extends AbstractRepository {
         return this.model.findAll({
             include: {
                 association: 'user',
-                attributes: ['firstName', 'lastName', 'email']
+                attributes: ['firstName', 'lastName']
             },
             ...options
         });

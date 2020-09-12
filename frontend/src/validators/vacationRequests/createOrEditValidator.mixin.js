@@ -1,4 +1,4 @@
-import { required, requiredIf, email } from 'vuelidate/lib/validators';
+import { required, requiredIf } from 'vuelidate/lib/validators';
 import abstractValidatorMixin from '../abstractValidator.mixin';
 import customValidatorsMixin from '../customValidators.mixin';
 import { mapGetters } from 'vuex';
@@ -9,7 +9,7 @@ export default {
     data() {
         return {
             serverErrors: {
-                email: [],
+                userId: [],
                 status: [],
                 startDate: [],
                 endDate: []
@@ -18,11 +18,10 @@ export default {
     },
     validations: {
         formData: {
-            email: {
+            userId: {
                 required: requiredIf(function() {
-                    return this.isAdmin && this.isCreateModal();
-                }),
-                email
+                    return this.isAdmin;
+                })
             },
             status: {
                 required: requiredIf(function() {
@@ -35,8 +34,8 @@ export default {
     },
     computed: {
         ...mapGetters(['isAdmin']),
-        emailErrors() {
-            return this.checkErrors('email');
+        userIdErrors() {
+            return this.checkErrors('userId');
         },
         statusErrors() {
             return this.checkErrors('status');

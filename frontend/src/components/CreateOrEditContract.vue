@@ -10,13 +10,11 @@
                 </v-card-title>
 
                 <div class="px-6">
-                    <v-text-field
-                        v-model="formData.email"
-                        :error-messages="emailErrors"
-                        label="Employee email"
-                        @input="$v.formData.email.$touch()"
-                        @blur="$v.formData.email.$touch()"
-                        @keyup="clearServerErrors('email')"
+                    <user-search-input
+                        v-model="formData.userId"
+                        :userData="formData.user"
+                        :errorMessages="userIdErrors"
+                        @keyup="clearServerErrors('userId')"
                     />
 
                     <v-menu :nudge-right="40" min-width="none" transition="scale-transition">
@@ -69,6 +67,7 @@
 <script>
 import createOrEditValidator from '@/validators/contracts/createOrEditValidator.mixin';
 import NotifyingService from '@/services/NotifyingService';
+import UserSearchInput from './UserSearchInput';
 import moment from 'moment';
 
 import { mapActions } from 'vuex';
@@ -81,10 +80,14 @@ export default {
 
     mixins: [createOrEditValidator],
 
+    components: {
+        'user-search-input': UserSearchInput
+    },
+
     data() {
         return {
             defaultFormData: {
-                email: '',
+                userId: null,
                 startDate: '',
                 endDate: '',
                 duration: null,
@@ -142,7 +145,10 @@ export default {
         calculateEndDate() {
             const startDate = moment(this.formData.startDate);
 
-            const endDate = startDate.add(this.formData.duration, 'M').format('YYYY-MM-DD');
+            const endDate = startDate
+                .add(this.formData.duration, 'M')
+                .subtract(1, 'day')
+                .format('YYYY-MM-DD');
 
             this.formData.endDate = endDate;
         },
@@ -164,7 +170,7 @@ export default {
         },
 
         setEditData() {
-            this.formData = { email: this.selectedItem.user.email, ...this.selectedItem };
+            this.formData = { ...this.selectedItem };
         },
 
         isCreateModal() {
@@ -173,14 +179,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-form {
-    position: relative;
-}
-.exit-btn {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-</style>

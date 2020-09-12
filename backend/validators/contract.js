@@ -1,14 +1,7 @@
 const { body } = require('express-validator');
 
 const create = [
-    body('email')
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage('email can not be empty')
-        .isEmail()
-        .withMessage('email address is not valid')
-        .normalizeEmail(),
+    body('userId').trim().not().isEmpty().withMessage('Should not be empty'),
 
     body('startDate')
         .trim()

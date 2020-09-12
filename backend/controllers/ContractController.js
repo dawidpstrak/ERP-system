@@ -38,18 +38,18 @@ class ContractController {
 
     async store(req, res) {
         try {
-            const { email, startDate, endDate, availableDaysOffAmount } = req.body;
+            const { userId, startDate, endDate, availableDaysOffAmount } = req.body;
 
-            const user = await this.userRepository.findByEmail(email, ['id']);
+            const user = await this.userRepository.findByPk(userId);
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'User with that email not exist' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
             }
 
             const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
                 startDate,
                 endDate,
-                user.id
+                userId
             );
 
             if (contractOverlaping) {
@@ -77,7 +77,7 @@ class ContractController {
         try {
             const {
                 id: contractId,
-                email,
+                userId,
                 startDate,
                 endDate,
                 availableDaysOffAmount: actualAvailableDaysOffAmount
@@ -89,10 +89,21 @@ class ContractController {
                 return res.status(HTTP.NOT_FOUND);
             }
 
-            const user = await this.userRepository.findByEmailAndContractId(email, contractId);
+            const user = await this.userRepository.findByPk(userId);
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'This contract belongs to other user' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
+            }
+
+            const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;
+
+            if (userId !== contract.userId) {
+                await this.userDaysOffAmountCalculator.onContractChangeOwner(
+                    contract.userId,
+                    user,
+                    previousAvailableDaysOffAmount,
+                    contract
+                );
             }
 
             const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
@@ -107,8 +118,6 @@ class ContractController {
                     .status(HTTP.UNPROCESSABLE_ENTITY)
                     .send({ title: 'Cannot update contract', message: 'There is exisiting contract in this time' });
             }
-
-            const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;
 
             await contract.update(req.body, { fields: Contract.UPDATABLE_FIELDS });
 

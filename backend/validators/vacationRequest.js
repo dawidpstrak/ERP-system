@@ -1,6 +1,16 @@
 const { body } = require('express-validator');
 
 const create = [
+    body('userId').custom((userId, { req }) => {
+        const { isAdmin } = req.loggedUser;
+
+        if (isAdmin && !userId) {
+            return Promise.reject('Should not be empty');
+        }
+
+        return Promise.resolve();
+    }),
+
     body('status').trim().not().isEmpty().withMessage('Should not be empty'),
 
     body('startDate')

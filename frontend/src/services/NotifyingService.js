@@ -41,11 +41,11 @@ export default {
         });
     },
 
-    noEditAccess: () => {
+    noAccessRights: () => {
         Vue.notify({
             type: 'error',
             title: 'No access rights',
-            text: 'You can edit only pending vacation requests'
+            text: 'You can edit or delete only pending vacation requests'
         });
     },
 

@@ -1,4 +1,4 @@
-import { required, email } from 'vuelidate/lib/validators';
+import { required } from 'vuelidate/lib/validators';
 import abstractValidatorMixin from '../abstractValidator.mixin';
 
 export default {
@@ -6,7 +6,7 @@ export default {
     data() {
         return {
             serverErrors: {
-                email: [],
+                userId: [],
                 startDate: [],
                 duration: [],
                 vacationsPerYear: []
@@ -15,15 +15,15 @@ export default {
     },
     validations: {
         formData: {
-            email: { required, email },
+            userId: { required },
             startDate: { required },
             duration: { required },
             vacationsPerYear: { required }
         }
     },
     computed: {
-        emailErrors() {
-            return this.checkErrors('email');
+        userIdErrors() {
+            return this.checkErrors('userId');
         },
         startDateErrors() {
             return this.checkErrors('startDate');
