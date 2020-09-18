@@ -13,5 +13,16 @@ services:
             - ~/data/mysql.erpsystem.docker:/var/lib/mysql
         ports:
             - 3306:3306
-        expose:
-            - 3306
+
+    mysql-test:
+        image: mysql:5.7
+        container_name: mysql.testerpsystem.docker
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: test_erp_system
+            MYSQL_USER: root
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - ~/data/mysql.testerpsystem.docker:/var/lib/mysql
+        ports:
+            - 3307:3306

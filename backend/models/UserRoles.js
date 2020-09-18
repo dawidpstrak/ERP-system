@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
                 references: {
-                    model: 'User',
+                    model: 'Users',
                     key: 'id'
                 }
             },
@@ -18,14 +18,14 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
                 references: {
-                    model: 'Role',
+                    model: 'Roles',
                     key: 'id'
                 }
             }
         },
         {
             tableName: 'UserRoles',
-            timestamps: false
+            updatedAt: false
         }
     );
 

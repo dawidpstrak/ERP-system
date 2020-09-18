@@ -4,6 +4,7 @@ const { Role } = require('../models');
 const faker = require('faker');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
+const config = require('../config');
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
@@ -29,7 +30,7 @@ module.exports = {
                 firstName: faker.name.firstName(),
                 lastName: faker.name.lastName(),
                 email: 'admin@admin.com',
-                password: bcrypt.hashSync('password', 12),
+                password: bcrypt.hashSync('password', config.app.bcryptSaltRounds),
                 birthDate: faker.date.past()
             },
             {
@@ -37,8 +38,18 @@ module.exports = {
                 firstName: faker.name.firstName(),
                 lastName: faker.name.lastName(),
                 email: 'user@user.com',
-                password: bcrypt.hashSync('password', 12),
-                birthDate: faker.date.past()
+                password: bcrypt.hashSync('password', config.app.bcryptSaltRounds),
+                birthDate: faker.date.past(),
+                availableDaysOffAmount: 2
+            },
+            {
+                id: uuidv4(),
+                firstName: faker.name.firstName(),
+                lastName: faker.name.lastName(),
+                email: 'user2@user.com',
+                password: bcrypt.hashSync('password', config.app.bcryptSaltRounds),
+                birthDate: faker.date.past(),
+                availableDaysOffAmount: 2
             }
         ]);
         const admin = await userRepository.findByEmail('admin@admin.com');
@@ -46,6 +57,9 @@ module.exports = {
 
         const user = await userRepository.findByEmail('user@user.com');
         await user.addRoles(userRole);
+
+        const user2 = await userRepository.findByEmail('user2@user.com');
+        await user2.addRoles(userRole);
     },
 
     down: async (queryInterface, Sequelize) => {

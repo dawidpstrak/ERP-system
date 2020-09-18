@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+const config = require('../config');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(
@@ -48,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
                             return;
                         }
 
-                        user.password = bcrypt.hashSync(user.password, 10);
+                        user.password = bcrypt.hashSync(user.password, config.app.bcryptSaltRounds);
                     }
                 }
             }

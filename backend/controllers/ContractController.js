@@ -86,7 +86,7 @@ class ContractController {
             const contract = await this.contractRepository.findByPk(contractId);
 
             if (!contract) {
-                return res.status(HTTP.NOT_FOUND);
+                return res.sendStatus(HTTP.NOT_FOUND);
             }
 
             const user = await this.userRepository.findByPk(userId);
@@ -96,15 +96,6 @@ class ContractController {
             }
 
             const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;
-
-            if (userId !== contract.userId) {
-                await this.userDaysOffAmountCalculator.onContractChangeOwner(
-                    contract.userId,
-                    user,
-                    previousAvailableDaysOffAmount,
-                    contract
-                );
-            }
 
             const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
                 startDate,
@@ -117,6 +108,15 @@ class ContractController {
                 return res
                     .status(HTTP.UNPROCESSABLE_ENTITY)
                     .send({ title: 'Cannot update contract', message: 'There is exisiting contract in this time' });
+            }
+
+            if (userId !== contract.userId) {
+                await this.userDaysOffAmountCalculator.onContractChangeOwner(
+                    contract.userId,
+                    user,
+                    previousAvailableDaysOffAmount,
+                    contract
+                );
             }
 
             await contract.update(req.body, { fields: Contract.UPDATABLE_FIELDS });

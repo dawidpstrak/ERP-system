@@ -11,7 +11,7 @@ class LoginHandler {
             return null;
         }
 
-        const isValid = this.bcrypt.compareSync(password, user.password);
+        const isValid = await this.bcrypt.compare(password, user.password);
 
         if (!isValid) {
             return null;

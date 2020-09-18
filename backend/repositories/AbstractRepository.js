@@ -3,7 +3,7 @@ class AbstractRepository {
         return this.model.create(data, options);
     }
 
-    findOne(options) {
+    findOne(options = {}) {
         return this.model.findOne({
             ...options
         });

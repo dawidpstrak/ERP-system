@@ -1,6 +1,5 @@
 const AbstractRepository = require('./AbstractRepository');
 const { User } = require('../models');
-const db = require('../models');
 
 class UserRepository extends AbstractRepository {
     get model() {

@@ -21,6 +21,13 @@ const create = [
 
     body('duration').not().isEmpty().withMessage('Should not be empty').isInt().withMessage('Should be integer type'),
 
+    body('vacationsPerYear')
+        .not()
+        .isEmpty()
+        .withMessage('Should not be empty')
+        .isInt()
+        .withMessage('Should be integer type'),
+
     body('availableDaysOffAmount')
         .not()
         .isEmpty()
