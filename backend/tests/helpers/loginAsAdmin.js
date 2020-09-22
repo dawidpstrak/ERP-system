@@ -1,6 +1,6 @@
 module.exports = request => {
     const credentials = {
-        email: 'admin@admin.com',
+        email: 'admin@erpsystem.test',
         password: 'password'
     };
 

@@ -44,6 +44,17 @@ const update = [
             return Promise.resolve();
         }),
 
+    body('birthDate').trim().not().isEmpty().withMessage('Should not be empty').isISO8601()
+];
+
+const store = [
+    body('password')
+        .trim()
+        .notEmpty()
+        .withMessage('password can not be empty')
+        .isLength({ min: 6, max: 32 })
+        .withMessage('password length must be between 6 and 32'),
+
     body('roles')
         .not()
         .isEmpty()
@@ -57,10 +68,9 @@ const update = [
             if (!areAllRolesValid) {
                 return Promise.reject('Some role not exist');
             }
-        })
+        }),
+    ...update
 ];
-
-const store = [...update];
 
 module.exports = {
     update,

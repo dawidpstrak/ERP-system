@@ -7,13 +7,21 @@ class ContractController {
      * @param { UserRepository } userRepository
      * @param { UserDaysOffAmountCalculator } userDaysOffAmountCalculator
      * @param { ContractsOverlapHandler } contractsOverlapHandler
+     * @param { ContractCalculator } contractCalculator
      */
 
-    constructor(userRepository, contractRepository, userDaysOffAmountCalculator, contractsOverlapHandler) {
+    constructor(
+        userRepository,
+        contractRepository,
+        userDaysOffAmountCalculator,
+        contractsOverlapHandler,
+        contractCalculator
+    ) {
         this.contractRepository = contractRepository;
         this.userRepository = userRepository;
         this.userDaysOffAmountCalculator = userDaysOffAmountCalculator;
         this.contractsOverlapHandler = contractsOverlapHandler;
+        this.contractCalculator = contractCalculator;
     }
 
     async index(req, res) {
@@ -38,7 +46,9 @@ class ContractController {
 
     async store(req, res) {
         try {
-            const { userId, startDate, endDate, availableDaysOffAmount } = req.body;
+            const { userId, startDate, duration, vacationsPerYear } = req.body;
+            const endDate = this.contractCalculator.endDate(startDate, duration);
+            const contractDaysOffAmount = this.contractCalculator.daysOffAmount(vacationsPerYear, duration);
 
             const user = await this.userRepository.findByPk(userId);
 
@@ -59,11 +69,13 @@ class ContractController {
             }
 
             const contract = await this.contractRepository.create({
+                ...req.body,
                 userId: user.id,
-                ...req.body
+                availableDaysOffAmount: contractDaysOffAmount,
+                endDate
             });
 
-            await this.userDaysOffAmountCalculator.onContractStore(user, availableDaysOffAmount);
+            await this.userDaysOffAmountCalculator.onContractStore(user, contractDaysOffAmount);
 
             return res.status(HTTP.CREATED).send(contract);
         } catch (error) {
@@ -75,13 +87,10 @@ class ContractController {
 
     async update(req, res) {
         try {
-            const {
-                id: contractId,
-                userId,
-                startDate,
-                endDate,
-                availableDaysOffAmount: actualAvailableDaysOffAmount
-            } = req.body;
+            const { id: contractId } = req.params;
+            const { userId, startDate, duration, vacationsPerYear } = req.body;
+            const endDate = this.contractCalculator.endDate(startDate, duration);
+            const actualAvailableDaysOffAmount = this.contractCalculator.daysOffAmount(vacationsPerYear, duration);
 
             const contract = await this.contractRepository.findByPk(contractId);
 
@@ -89,13 +98,13 @@ class ContractController {
                 return res.sendStatus(HTTP.NOT_FOUND);
             }
 
+            const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;
+
             const user = await this.userRepository.findByPk(userId);
 
             if (!user) {
                 return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
             }
-
-            const previousAvailableDaysOffAmount = contract.availableDaysOffAmount;
 
             const contractOverlaping = await this.contractsOverlapHandler.isAnyContractOverlaping(
                 startDate,
@@ -119,7 +128,10 @@ class ContractController {
                 );
             }
 
-            await contract.update(req.body, { fields: Contract.UPDATABLE_FIELDS });
+            await contract.update(
+                { ...req.body, availableDaysOffAmount: actualAvailableDaysOffAmount, endDate },
+                { fields: Contract.UPDATABLE_FIELDS }
+            );
 
             await this.userDaysOffAmountCalculator.onContractUpdate(
                 user,

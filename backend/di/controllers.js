@@ -14,7 +14,8 @@ module.exports = {
                 '@repositories.user',
                 '@repositories.contract',
                 '@services.user.userDaysOffAmountCalculator',
-                '@services.contract.contractsOverlapHandler'
+                '@services.contract.contractsOverlapHandler',
+                '@services.contract.contractCalculator'
             ]
         },
         'controllers.vacationRequest': {

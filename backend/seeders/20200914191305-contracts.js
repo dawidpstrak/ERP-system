@@ -30,6 +30,9 @@ module.exports = {
                 availableDaysOffAmount: 2
             }
         ]);
+
+        await user.update({ availableDaysOffAmount: 2 });
+        await user2.update({ availableDaysOffAmount: 2 });
     },
 
     down: async (queryInterface, Sequelize) => {

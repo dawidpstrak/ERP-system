@@ -25,9 +25,10 @@ describe('AuthController', () => {
             const { loggedUser } = response.body;
 
             expect(response.status).to.equal(HTTP.OK);
-            expect(loggedUser).to.have.property('email', 'admin@admin.com');
+            expect(loggedUser).to.have.property('email', 'admin@erpsystem.test');
             expect(loggedUser).to.not.have.property('password');
             expect(response.body).to.have.property('token');
+            expect(loggedUser).to.have.property('roles');
         });
 
         it('returns OK while logged in AS USER', async () => {
@@ -36,9 +37,10 @@ describe('AuthController', () => {
             const { loggedUser } = response.body;
 
             expect(response.status).to.equal(HTTP.OK);
-            expect(loggedUser).to.have.property('email', 'user@user.com');
+            expect(loggedUser).to.have.property('email', 'user@erpsystem.test');
             expect(loggedUser).to.not.have.property('password');
             expect(response.body).to.have.property('token');
+            expect(loggedUser).to.have.property('roles');
         });
 
         it('returns BAD_REQUEST sending invalid data (empty)', async () => {
@@ -69,7 +71,7 @@ describe('AuthController', () => {
         it('returns UNATHORIZED when user with passed email exist but password is wrong', async () => {
             const response = await request
                 .post('/auth/login')
-                .send({ email: 'user@user.com', password: 'wrong-password' });
+                .send({ email: 'user@erpsystem.test', password: 'wrong-password' });
 
             expect(response.status).to.equal(HTTP.UNAUTHORIZED);
             expect(response.body).to.deep.equal({ message: 'Wrong credentials' });

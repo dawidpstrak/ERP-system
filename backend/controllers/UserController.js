@@ -1,4 +1,5 @@
 const HTTP = require('http-status-codes');
+const { Op } = require('sequelize');
 
 const { User } = require('../models');
 
@@ -15,17 +16,17 @@ class UserController {
 
     async index(req, res) {
         try {
-            const { query } = req.body;
+            const { query } = req.query;
 
             const where = {};
 
             if (query) {
                 where[Op.or] = {
                     firstName: {
-                        [Op.like]: query + '%'
+                        [Op.like]: `%${query}%`
                     },
                     lastName: {
-                        [Op.like]: query + '%'
+                        [Op.like]: `%${query}%`
                     }
                 };
             }
@@ -60,11 +61,13 @@ class UserController {
 
             const userRoles = await this.roleRepository.getByNames(roles);
 
-            const newUser = await this.userRepository.create(req.body);
+            const newUser = await this.userRepository.create(req.body, { fields: User.CREATABLE_FIELDS });
 
             await newUser.addRoles(userRoles);
 
-            return res.status(HTTP.CREATED).send(newUser);
+            const newUserWithExludedPassword = await this.userRepository.findByPk(newUser.id);
+
+            return res.status(HTTP.CREATED).send(newUserWithExludedPassword);
         } catch (error) {
             console.error(error);
 
@@ -79,7 +82,7 @@ class UserController {
             const user = await this.userRepository.findByPk(id);
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND);
+                return res.sendStatus(HTTP.NOT_FOUND);
             }
 
             await user.update(req.body, { fields: User.UPDATABLE_FIELDS });

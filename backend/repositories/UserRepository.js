@@ -8,7 +8,7 @@ class UserRepository extends AbstractRepository {
 
     getAll(where) {
         return this.model.findAll({
-            ...where,
+            where,
             include: [
                 {
                     association: 'roles',

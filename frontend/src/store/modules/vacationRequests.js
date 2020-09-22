@@ -23,7 +23,7 @@ const actions = {
         commit('SET_VACATION_REQUESTS', data);
     },
 
-    async saveVacationRequest({ dispatch }, vacationRequest) {
+    async saveVacationRequest({ dispatch, getters }, vacationRequest) {
         if (vacationRequest.id) {
             await axios.put(`/vacationRequests/${vacationRequest.id}`, vacationRequest);
         } else {
@@ -31,14 +31,20 @@ const actions = {
         }
 
         dispatch('fetchVacationRequests');
-        dispatch('renewLoggedUserData');
+
+        if (!getters.isAdmin) {
+            dispatch('renewLoggedUserData');
+        }
     },
 
-    async deleteVacationRequest({ dispatch }, id) {
+    async deleteVacationRequest({ dispatch, getters }, id) {
         await axios.delete(`/vacationRequests/${id}`);
 
         dispatch('fetchVacationRequests');
-        dispatch('renewLoggedUserData');
+
+        if (!getters.isAdmin) {
+            dispatch('renewLoggedUserData');
+        }
     }
 };
 

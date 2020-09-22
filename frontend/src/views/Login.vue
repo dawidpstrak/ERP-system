@@ -5,7 +5,7 @@
                 <h1 class="display-1">Login</h1>
             </v-card-title>
             <v-card-text>
-                <v-form>
+                <v-form class="pb-0">
                     <v-text-field
                         v-model="credentials.email"
                         label="Email"
@@ -35,7 +35,7 @@
                 </v-form>
                 <v-divider class="mt-6"></v-divider>
                 <v-card-actions class="justify-center">
-                    <v-btn class="login-button" color="info" @click="loginRequest">Login</v-btn>
+                    <v-btn class="login-button ma-3" color="info" @click="loginRequest">Login</v-btn>
                 </v-card-actions>
             </v-card-text>
         </v-card>
@@ -84,16 +84,3 @@ export default {
     }
 };
 </script>
-
-// TODO use vuetify classes insted of styles below
-<style scoped>
-.login-button {
-    margin: 15px 5px;
-}
-.v-card__text {
-    padding-bottom: 0;
-}
-.alert {
-    color: rgb(255, 0, 0);
-}
-</style>

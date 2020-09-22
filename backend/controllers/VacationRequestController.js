@@ -50,7 +50,7 @@ class VacationRequestController {
             }
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User does not exist' });
             }
 
             const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
@@ -74,7 +74,8 @@ class VacationRequestController {
 
     async update(req, res) {
         try {
-            const { id: vacationRequestId, userId, startDate, endDate, status } = req.body;
+            const { id: vacationRequestId } = req.params;
+            const { userId, startDate, endDate, status } = req.body;
             const { isAdmin } = req.loggedUser;
 
             if (!isAdmin && status !== VacationRequest.PENDING) {
@@ -84,13 +85,13 @@ class VacationRequestController {
             const user = await this.userRepository.findByPk(userId);
 
             if (!user) {
-                return res.status(HTTP.NOT_FOUND).send({ message: 'User not exist' });
+                return res.status(HTTP.NOT_FOUND).send({ message: 'User does not exist' });
             }
 
             const vacationRequest = await this.vacationRequestRepository.findByPk(vacationRequestId);
 
             if (!vacationRequest) {
-                return res.status(HTTP.NOT_FOUND);
+                return res.sendStatus(HTTP.NOT_FOUND);
             }
 
             const previousRequestedDaysOff = vacationRequest.requestedDaysOff;
@@ -145,7 +146,7 @@ class VacationRequestController {
 
             const vacationRequest = await this.vacationRequestRepository.findByPk(id);
 
-            if (!isAdmin && vacationRequest.status !== VacationRequest.PENDING) {
+            if (!isAdmin && vacationRequest && vacationRequest.status !== VacationRequest.PENDING) {
                 return res.sendStatus(HTTP.FORBIDDEN);
             }
 

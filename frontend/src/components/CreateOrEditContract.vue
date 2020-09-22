@@ -2,8 +2,8 @@
     <v-dialog v-model="isModalShown" width="350" persistent>
         <v-card>
             <v-form @submit.prevent="submit">
-                <v-card-title class="d-flex justify-space-between px-6"
-                    >{{ formTitle() }}
+                <v-card-title class="d-flex justify-space-between px-6">
+                    {{ formTitle() }}
                     <v-btn icon @click="onClose">
                         <v-icon>{{ 'mdi-location-exit' }}</v-icon>
                     </v-btn>
@@ -68,7 +68,6 @@
 import createOrEditValidator from '@/validators/contracts/createOrEditValidator.mixin';
 import NotifyingService from '@/services/NotifyingService';
 import UserSearchInput from './UserSearchInput';
-import moment from 'moment';
 
 import { mapActions } from 'vuex';
 
@@ -89,10 +88,8 @@ export default {
             defaultFormData: {
                 userId: null,
                 startDate: '',
-                endDate: '',
                 duration: null,
-                vacationsPerYear: null,
-                availableDaysOffAmount: null
+                vacationsPerYear: null
             },
             formData: {},
             durationOptions: [1, 3, 6, 12],
@@ -114,8 +111,6 @@ export default {
             if (this.$v.$invalid) {
                 return;
             }
-
-            this.calculateAll();
 
             try {
                 await this.saveContract(this.formData);
@@ -140,29 +135,6 @@ export default {
 
         onClose() {
             this.$emit('closeModal');
-        },
-
-        calculateEndDate() {
-            const startDate = moment(this.formData.startDate);
-
-            const endDate = startDate
-                .add(this.formData.duration, 'M')
-                .subtract(1, 'day')
-                .format('YYYY-MM-DD');
-
-            this.formData.endDate = endDate;
-        },
-
-        calculateAvailableDaysOff() {
-            this.formData.availableDaysOffAmount = Math.round(
-                (this.formData.vacationsPerYear / 12) * this.formData.duration
-            );
-        },
-
-        calculateAll() {
-            // TODO extra check on backend in future
-            this.calculateEndDate();
-            this.calculateAvailableDaysOff();
         },
 
         setDefaultFormData() {

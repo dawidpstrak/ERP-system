@@ -24,7 +24,7 @@ const actions = {
     },
 
     async searchUsers(vuexContext, query) {
-        const { data } = await axios.get('/users', query);
+        const { data } = await axios.get('/users', { params: { query } });
 
         return data;
     },

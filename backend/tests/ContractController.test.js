@@ -60,7 +60,7 @@ describe('ContractController', () => {
         it("returns CREATED and updating user's days off, sending valid data AS ADMIN", async () => {
             const user = await userRepository.findByPk(loggedUser.id);
 
-            expect(user).to.have.property('availableDaysOffAmount', 2);
+            expect(user).to.have.property('availableDaysOffAmount', 0);
 
             const response = await request.post('/contracts').set('Authorization', `Bearer ${adminToken}`).send({
                 userId: loggedUser.id,
@@ -73,16 +73,11 @@ describe('ContractController', () => {
 
             const updatedUser = await userRepository.findByPk(loggedUser.id);
 
+            const newContract = await contractRepository.findByPk(response.body.id);
+
             expect(response.status).to.equal(HTTP.CREATED);
-            expect(response.body).to.include({
-                userId: loggedUser.id,
-                startDate: '2020-05-02',
-                endDate: '2020-06-01',
-                duration: 1,
-                vacationsPerYear: 20,
-                availableDaysOffAmount: 2
-            });
-            expect(updatedUser).to.have.property('availableDaysOffAmount', 4);
+            expect(newContract).to.not.be.null;
+            expect(updatedUser).to.have.property('availableDaysOffAmount', 2);
         });
 
         it('returns NOT_FOUND, sending request with non existing userId AS ADMIN', async () => {
@@ -111,19 +106,15 @@ describe('ContractController', () => {
             const { errors } = response.body;
 
             expect(response.status).to.equal(HTTP.BAD_REQUEST);
-            expect(errors).to.have.lengthOf(11);
+            expect(errors).to.have.lengthOf(7);
             expect(errors).to.deep.equal([
                 { message: 'Should not be empty', param: 'userId' },
                 { message: 'Should not be empty', param: 'startDate' },
                 { message: 'Invalid date format', param: 'startDate' },
-                { message: 'Should not be empty', param: 'endDate' },
-                { message: 'Invalid date format', param: 'endDate' },
                 { message: 'Should not be empty', param: 'duration' },
                 { message: 'Should be integer type', param: 'duration' },
                 { message: 'Should not be empty', param: 'vacationsPerYear' },
-                { message: 'Should be integer type', param: 'vacationsPerYear' },
-                { message: 'Should not be empty', param: 'availableDaysOffAmount' },
-                { message: 'Should be integer type', param: 'availableDaysOffAmount' }
+                { message: 'Should be integer type', param: 'vacationsPerYear' }
             ]);
         });
 
@@ -159,6 +150,10 @@ describe('ContractController', () => {
 
     describe('PUT /contracts/:id', () => {
         it("returns OK, updating contract and user's days off AS ADMIN", async () => {
+            const user = await userRepository.findByPk(loggedUser.id);
+
+            expect(user).to.have.property('availableDaysOffAmount', 2);
+
             const response = await request
                 .put('/contracts/' + contract.id)
                 .set('Authorization', `Bearer ${adminToken}`)
@@ -172,7 +167,7 @@ describe('ContractController', () => {
                     availableDaysOffAmount: 5
                 });
 
-            const user = await userRepository.findByPk(loggedUser.id);
+            const updatedUser = await userRepository.findByPk(loggedUser.id);
 
             expect(response.status).to.equal(HTTP.OK);
             expect(response.body).to.include({
@@ -185,15 +180,15 @@ describe('ContractController', () => {
                 vacationsPerYear: 20,
                 availableDaysOffAmount: 5
             });
-            expect(user).to.have.property('availableDaysOffAmount', 7);
+            expect(updatedUser).to.have.property('availableDaysOffAmount', 5);
         });
 
         it('returns OK, changing owner of contract AS ADMIN (days off in both users should be updated)', async () => {
-            const firstUser = await userRepository.findByEmail('user@user.com');
-            const secondUser = await userRepository.findByEmail('user2@user.com');
+            const firstUser = await userRepository.findByEmail('user@erpsystem.test');
+            const secondUser = await userRepository.findByEmail('user2@erpsystem.test');
 
-            expect(firstUser).to.have.property('availableDaysOffAmount', 7);
-            expect(secondUser).to.have.property('availableDaysOffAmount', 2);
+            expect(firstUser).to.have.property('availableDaysOffAmount', 5);
+            expect(secondUser).to.have.property('availableDaysOffAmount', 0);
 
             const response = await request
                 .put('/contracts/' + contract.id)
@@ -212,12 +207,12 @@ describe('ContractController', () => {
             const secondUpdatedUser = await userRepository.findByPk(secondUser.id);
 
             expect(response.status).to.equal(HTTP.OK);
-            expect(firstUpdatedUser).to.have.property('availableDaysOffAmount', 2);
-            expect(secondUpdatedUser).to.have.property('availableDaysOffAmount', 7);
+            expect(firstUpdatedUser).to.have.property('availableDaysOffAmount', 0);
+            expect(secondUpdatedUser).to.have.property('availableDaysOffAmount', 5);
             expect(response.body).to.have.property('userId', secondUser.id);
         });
 
-        it('returns NOT_FOUND when user does not exist AS ADMIN', async () => {
+        it('returns NOT_FOUND when user does not exist, sending request AS ADMIN', async () => {
             const response = await request
                 .put('/contracts/' + contract.id)
                 .set('Authorization', `Bearer ${adminToken}`)
@@ -232,12 +227,11 @@ describe('ContractController', () => {
                 });
 
             expect(response.status).to.equal(HTTP.NOT_FOUND);
-            expect(response.body).to.deep.equal({ message: 'User not exist' });
         });
 
         it('returns NOT_FOUND requesting update not existing contract AS ADMIN', async () => {
             const response = await request
-                .put('/contracts/' + contract.id)
+                .put('/contracts/' + 'not-existing-contract-id')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     id: 'not-existing-contract-id',
@@ -268,19 +262,15 @@ describe('ContractController', () => {
             const { errors } = response.body;
 
             expect(response.status).to.equal(HTTP.BAD_REQUEST);
-            expect(errors).to.have.lengthOf(11);
+            expect(errors).to.have.lengthOf(7);
             expect(errors).to.deep.equal([
                 { message: 'Should not be empty', param: 'userId' },
                 { message: 'Should not be empty', param: 'startDate' },
                 { message: 'Invalid date format', param: 'startDate' },
-                { message: 'Should not be empty', param: 'endDate' },
-                { message: 'Invalid date format', param: 'endDate' },
                 { message: 'Should not be empty', param: 'duration' },
                 { message: 'Should be integer type', param: 'duration' },
                 { message: 'Should not be empty', param: 'vacationsPerYear' },
-                { message: 'Should be integer type', param: 'vacationsPerYear' },
-                { message: 'Should not be empty', param: 'availableDaysOffAmount' },
-                { message: 'Should be integer type', param: 'availableDaysOffAmount' }
+                { message: 'Should be integer type', param: 'vacationsPerYear' }
             ]);
         });
 
@@ -320,20 +310,22 @@ describe('ContractController', () => {
 
     describe('DELETE /contracts/:id', () => {
         it("returns NO_CONTENT, successfully deleting contract and updating user's days off AS ADMIN", async () => {
-            const updatedContract = await contractRepository.findByPk(contract.id);
+            contract = await contractRepository.findByPk(contract.id);
 
-            const user = await userRepository.findByPk(updatedContract.userId);
+            const user = await userRepository.findByPk(contract.userId);
 
-            expect(user.availableDaysOffAmount).to.equal(7);
+            expect(user.availableDaysOffAmount).to.equal(5);
 
             const response = await request
-                .delete('/contracts/' + updatedContract.id)
+                .delete('/contracts/' + contract.id)
                 .set('Authorization', `Bearer ${adminToken}`);
 
-            const updatedUser = await userRepository.findByPk(updatedContract.userId);
+            const updatedUser = await userRepository.findByPk(contract.userId);
+            const deletedContract = await contractRepository.findByPk(contract.id);
 
             expect(response.status).to.equal(HTTP.NO_CONTENT);
-            expect(updatedUser.availableDaysOffAmount).to.equal(2);
+            expect(updatedUser.availableDaysOffAmount).to.equal(0);
+            expect(deletedContract).to.be.null;
         });
 
         it('returns NO_CONTENT requesting delete contract AS ADMIN', async () => {

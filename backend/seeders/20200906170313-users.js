@@ -39,8 +39,7 @@ module.exports = {
                 lastName: faker.name.lastName(),
                 email: 'user@user.com',
                 password: bcrypt.hashSync('password', config.app.bcryptSaltRounds),
-                birthDate: faker.date.past(),
-                availableDaysOffAmount: 2
+                birthDate: faker.date.past()
             },
             {
                 id: uuidv4(),
@@ -48,8 +47,7 @@ module.exports = {
                 lastName: faker.name.lastName(),
                 email: 'user2@user.com',
                 password: bcrypt.hashSync('password', config.app.bcryptSaltRounds),
-                birthDate: faker.date.past(),
-                availableDaysOffAmount: 2
+                birthDate: faker.date.past()
             }
         ]);
         const admin = await userRepository.findByEmail('admin@admin.com');

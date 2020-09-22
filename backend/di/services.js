@@ -11,6 +11,10 @@ module.exports = {
         'services.contract.contractsOverlapHandler': {
             class: '../services/Contract/ContractsOverlapHandler',
             arguments: ['@repositories.contract']
+        },
+        'services.contract.contractCalculator': {
+            class: '../services/Contract/ContractCalculator',
+            arguments: ['@repositories.contract', '%moment']
         }
     }
 };

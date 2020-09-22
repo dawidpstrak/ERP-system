@@ -1,8 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const faker = require('faker');
-const bcrypt = require('bcrypt');
 
-const { User, Role, Contract, sequelize } = require('../../models');
+const { User, Role, Contract, VacationRequest } = require('../../models');
 
 module.exports = async () => {
     try {
@@ -20,7 +19,7 @@ module.exports = async () => {
             id: uuidv4(),
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
-            email: 'admin@admin.com',
+            email: 'admin@erpsystem.test',
             password: 'password',
             birthDate: faker.date.past()
         });
@@ -29,24 +28,22 @@ module.exports = async () => {
 
         const user = await User.create({
             id: uuidv4(),
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            email: 'user@user.com',
+            firstName: 'user1',
+            lastName: 'user1',
+            email: 'user@erpsystem.test',
             password: 'password',
-            birthDate: faker.date.past(),
-            availableDaysOffAmount: 2
+            birthDate: faker.date.past()
         });
 
         await user.addRoles(userRole);
 
         const user2 = await User.create({
             id: uuidv4(),
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            email: 'user2@user.com',
+            firstName: 'user2',
+            lastName: 'user2',
+            email: 'user2@erpsystem.test',
             password: 'password',
-            birthDate: faker.date.past(),
-            availableDaysOffAmount: 2
+            birthDate: faker.date.past()
         });
 
         await user2.addRoles(userRole);
@@ -69,6 +66,24 @@ module.exports = async () => {
             duration: 1,
             vacationsPerYear: 20,
             availableDaysOffAmount: 2
+        });
+
+        await VacationRequest.create({
+            id: uuidv4(),
+            userId: user.id,
+            status: 'pending',
+            startDate: '2020-01-01',
+            endDate: '2020-01-03',
+            requestedDaysOff: 2
+        });
+
+        await VacationRequest.create({
+            id: uuidv4(),
+            userId: user2.id,
+            status: 'pending',
+            startDate: '2020-01-01',
+            endDate: '2020-01-03',
+            requestedDaysOff: 2
         });
     } catch (error) {
         console.error(error);

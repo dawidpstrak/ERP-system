@@ -30,7 +30,8 @@ export default {
         return {
             employee: {},
             searchedEmployees: [],
-            isLoading: false
+            isLoading: false,
+            minimumQuerySearchLength: 3
         };
     },
 
@@ -40,7 +41,8 @@ export default {
         if (isEditMode) {
             this.employee = {
                 id: this.value,
-                fullName: this.userData.firstName + ' ' + this.userData.lastName
+                fullName: this.userData.firstName + ' ' + this.userData.lastName,
+                ...this.userData
             };
 
             this.searchedEmployees.push(this.employee);
@@ -62,7 +64,7 @@ export default {
         ...mapActions(['searchUsers']),
 
         async onUpdateEmployeeSearch(query) {
-            if (!query || this.isLoading) {
+            if (!query || this.isLoading || query.length < this.minimumQuerySearchLength) {
                 return;
             }
 
@@ -78,7 +80,9 @@ export default {
         },
 
         onChangeEmployee(employee) {
-            this.$emit('input', employee.id);
+            if (employee) {
+                this.$emit('input', employee.id);
+            }
         }
     }
 };
