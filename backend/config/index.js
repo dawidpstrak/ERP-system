@@ -1,5 +1,9 @@
+const fs = require('fs');
+
+const testEnvPath = fs.existsSync('.env.test') ? '.env.test' : '../backend/.env.test';
+
 require('dotenv').config({
-    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
+    path: process.env.NODE_ENV === 'test' ? testEnvPath : '.env'
 });
 
 const env = (key, defaultValue = '') => process.env[key] || defaultValue;
