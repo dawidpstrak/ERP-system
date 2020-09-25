@@ -15,6 +15,7 @@
                 :key="link.title"
                 :to="link.to"
                 align="center"
+                :data-cy="link.data"
                 class="text-decoration-none"
             >
                 <v-list-item>
@@ -26,7 +27,7 @@
                     </v-list-item-content>
                 </v-list-item>
             </router-link>
-            <router-link to="/logout" class="text-decoration-none">
+            <router-link to="/logout" data-cy="nav-logout" class="text-decoration-none">
                 <v-list-item link>
                     <v-list-item-icon>
                         <v-icon>{{ 'mdi-logout-variant' }}</v-icon>
@@ -59,11 +60,13 @@ export default {
                 return [];
             }
 
-            const userLinks = [{ title: 'DASHBOARD', icon: 'mdi-view-dashboard-outline', to: '/dashboard' }];
+            const userLinks = [
+                { title: 'DASHBOARD', icon: 'mdi-view-dashboard-outline', to: '/dashboard', data: 'nav-dashboard' }
+            ];
             const adminLinks = [
                 ...userLinks,
-                { title: 'CONTRACTS', icon: 'mdi-account-clock-outline ', to: '/contracts' },
-                { title: 'VACATIONS', icon: 'mdi-hail', to: '/vacation-requests' }
+                { title: 'CONTRACTS', icon: 'mdi-account-clock-outline ', to: '/contracts', data: 'nav-contracts' },
+                { title: 'VACATIONS', icon: 'mdi-hail', to: '/vacation-requests', data: 'nav-vacations' }
             ];
 
             return this.isAdmin ? adminLinks : userLinks;

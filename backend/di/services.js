@@ -2,7 +2,7 @@ module.exports = {
     services: {
         'services.auth.loginHandler': {
             class: '../services/Auth/LoginHandler',
-            arguments: ['@repositories.user', '%bcrypt']
+            arguments: ['@repositories.user', '%bcryptjs']
         },
         'services.user.userDaysOffAmountCalculator': {
             class: '../services/User/UserDaysOffAmountCalculator',

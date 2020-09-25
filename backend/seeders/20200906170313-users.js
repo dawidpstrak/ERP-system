@@ -2,7 +2,7 @@
 
 const { Role } = require('../models');
 const faker = require('faker');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
 

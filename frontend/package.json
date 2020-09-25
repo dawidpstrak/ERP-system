@@ -6,14 +6,16 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
-        "start-test-server": "cd ../backend && NODE_ENV=test npm run start",
-        "test": "jest --runInBand --detectOpenHandles"
+        "start-test-server": "cd ../backend && npm run start-test-server",
+        "test-puppeteer": "jest --runInBand --detectOpenHandles",
+        "setup-test-db": "cd ../backend && npm run test:db-setup-tables",
+        "test-cypress": "npm run setup-test-db && NODE_ENV=test cypress open"
     },
     "dependencies": {
         "axios": "^0.19.2",
         "core-js": "^3.6.5",
         "dotenv": "^8.2.0",
-        "http-status-codes": "^2.1.2",
+        "http-status-codes": "^2.1.4",
         "moment": "^2.27.0",
         "sass": "^1.26.10",
         "sass-loader": "^9.0.2",
@@ -30,6 +32,7 @@
         "@vue/cli-service": "~4.4.0",
         "babel-eslint": "^10.1.0",
         "chai": "^4.2.0",
+        "cypress": "^5.2.0",
         "eslint": "^6.7.2",
         "eslint-plugin-vue": "^6.2.2",
         "jest": "^26.4.2",

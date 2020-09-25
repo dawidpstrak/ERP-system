@@ -16,7 +16,7 @@
                 <v-btn color="primary" outlined @click="onCancel">
                     cancel
                 </v-btn>
-                <v-btn color="error" outlined @click="onConfirm">
+                <v-btn data-cy="confirm-delete" color="error" outlined @click="onConfirm">
                     confirm
                 </v-btn>
             </v-card-actions>

@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="isModalShown" width="350" persistent>
         <v-card>
-            <v-form @submit.prevent="submit">
+            <v-form data-cy="contract-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6">
                     {{ formTitle() }}
                     <v-btn icon @click="onClose">
@@ -14,6 +14,7 @@
                         v-model="formData.userId"
                         :userData="formData.user"
                         :errorMessages="userIdErrors"
+                        data-cy="contract-user-search-input"
                         @keyup="clearServerErrors('userId')"
                     />
 
@@ -25,6 +26,7 @@
                                 :error-messages="startDateErrors"
                                 :value="formData.startDate"
                                 readonly
+                                data-cy="contract-start-date-input"
                                 v-on="on"
                                 @input="$v.formData.startDate.$touch()"
                                 @blur="$v.formData.startDate.$touch()"
@@ -40,6 +42,7 @@
                         label="Duration in months"
                         :items="durationOptions"
                         :error-messages="durationErrors"
+                        data-cy="contract-duration-input"
                         @input="$v.formData.duration.$touch()"
                         @blur="$v.formData.duration.$touch()"
                         @keyup="clearServerErrors('duration')"
@@ -50,13 +53,14 @@
                         label="Vacation days per year"
                         :items="vacationsPerYearOptions"
                         :error-messages="vacationsPerYearErrors"
+                        data-cy="contract-vacation-days-options-select"
                         @input="$v.formData.vacationsPerYear.$touch()"
                         @blur="$v.formData.vacationsPerYear.$touch()"
                         @keyup="clearServerErrors('vacationsPerYear')"
                     />
 
                     <v-card-actions class="d-flex justify-center">
-                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                        <v-btn outlined color="primary" data-cy="contract-submit-button" type="submit">submit</v-btn>
                     </v-card-actions>
                 </div>
             </v-form>

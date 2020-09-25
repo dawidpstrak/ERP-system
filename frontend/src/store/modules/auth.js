@@ -40,7 +40,7 @@ const actions = {
     },
 
     async renewLoggedUserData({ commit }) {
-        const { data } = await axios.get(`users/me`);
+        const { data } = await axios.get(`/me`);
 
         commit('SET_LOGGED_USER', data);
     }

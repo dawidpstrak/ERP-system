@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="isModalShown" width="350" persistent>
         <v-card>
-            <v-form @submit.prevent="submit">
+            <v-form data-cy="employee-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6"
                     >{{ formTitle() }}
                     <v-btn icon @click="onClose">
@@ -14,6 +14,7 @@
                         v-model="formData.firstName"
                         :error-messages="firstNameErrors"
                         label="First name"
+                        data-cy="user-first-name-input"
                         @input="$v.formData.firstName.$touch()"
                         @blur="$v.formData.firstName.$touch()"
                         @keyup="clearServerErrors('firstName')"
@@ -23,6 +24,7 @@
                         v-model="formData.lastName"
                         :error-messages="lastNameErrors"
                         label="Last name"
+                        data-cy="user-last-name-input"
                         @input="$v.formData.lastName.$touch()"
                         @blur="$v.formData.lastName.$touch()"
                         @keyup="clearServerErrors('lastName')"
@@ -32,6 +34,7 @@
                         v-model="formData.email"
                         :error-messages="emailErrors"
                         label="Email"
+                        data-cy="user-email-input"
                         @input="$v.formData.email.$touch()"
                         @blur="$v.formData.email.$touch()"
                         @keyup="clearServerErrors('email')"
@@ -44,6 +47,7 @@
                         :error-messages="passwordErrors"
                         :type="showPassword ? 'text' : 'password'"
                         label="Password"
+                        data-cy="user-password-input"
                         @click:append="showPassword = !showPassword"
                         @input="$v.formData.password.$touch()"
                         @blur="$v.formData.password.$touch()"
@@ -58,6 +62,7 @@
                                 :error-messages="birthDateErrors"
                                 :value="formData.birthDate"
                                 readonly
+                                data-cy="user-birthdate-input"
                                 v-on="on"
                                 @input="$v.formData.birthDate.$touch()"
                                 @blur="$v.formData.birthDate.$touch()"
@@ -68,7 +73,7 @@
                     </v-menu>
 
                     <v-card-actions class="d-flex justify-center">
-                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                        <v-btn outlined color="primary" data-cy="user-submit-button" type="submit">submit</v-btn>
                     </v-card-actions>
                 </div>
             </v-form>

@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Contracts</v-card-title>
-                <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
+                <v-btn class="mr-6" outlined color="primary" data-cy="add-contract-button" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>contract
                 </v-btn>
             </v-card>
@@ -14,6 +14,7 @@
                 :items-per-page="5"
                 :mobile-breakpoint="990"
                 :footer-props="footerProps"
+                data-cy="contracts-list"
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">

@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Employees</v-card-title>
-                <v-btn outlined color="primary" class="mr-6" @click="openCreateOrEdit()">
+                <v-btn outlined color="primary" class="mr-6" data-cy="add-employee-button" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>employee
                 </v-btn>
             </v-card>
@@ -13,6 +13,7 @@
                 :items-per-page="5"
                 :mobile-breakpoint="990"
                 :footer-props="footerProps"
+                data-cy="employee-list"
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">

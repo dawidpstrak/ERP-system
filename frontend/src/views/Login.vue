@@ -13,6 +13,7 @@
                         error-count="2"
                         required
                         :error-messages="emailErrors"
+                        data-cy="login-email-input"
                         @input="$v.credentials.email.$touch()"
                         @blur="$v.credentials.email.$touch()"
                         @keyup="clearServerErrors('login')"
@@ -26,6 +27,7 @@
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         :error-messages="passwordErrors"
+                        data-cy="login-password-input"
                         @keyup.enter="loginRequest"
                         @click:append="showPassword = !showPassword"
                         @input="$v.credentials.password.$touch()"
@@ -35,7 +37,9 @@
                 </v-form>
                 <v-divider class="mt-6"></v-divider>
                 <v-card-actions class="justify-center">
-                    <v-btn class="login-button ma-3" color="info" @click="loginRequest">Login</v-btn>
+                    <v-btn data-cy="login-button" class="login-button ma-3" color="info" @click="loginRequest"
+                        >Login</v-btn
+                    >
                 </v-card-actions>
             </v-card-text>
         </v-card>

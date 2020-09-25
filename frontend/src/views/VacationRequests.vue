@@ -3,7 +3,7 @@
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
                 <v-card-title class="ml-6">Vacation requests</v-card-title>
-                <v-btn class="mr-6" outlined color="primary" @click="openCreateOrEdit()">
+                <v-btn class="mr-6" outlined color="primary" data-cy="add-vacation-button" @click="openCreateOrEdit()">
                     <v-icon left>mdi-plus</v-icon>Vacation Requests
                 </v-btn>
             </v-card>
@@ -15,6 +15,7 @@
                 :mobile-breakpoint="990"
                 :footer-props="vacationRequestsProps.footer"
                 :sort-by="'startDate'"
+                data-cy="vacations-list"
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">

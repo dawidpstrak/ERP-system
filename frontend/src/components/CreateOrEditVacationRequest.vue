@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="isModalShown" width="350" persistent>
         <v-card>
-            <v-form @submit.prevent="submit">
+            <v-form data-cy="vacation-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6"
                     >{{ formTitle() }}
                     <v-btn icon @click="onClose">
@@ -13,6 +13,7 @@
                     <user-search-input
                         v-if="isAdmin"
                         v-model="formData.userId"
+                        data-cy="vacation-user-search-input"
                         :userData="formData.user"
                         :errorMessages="userIdErrors"
                         @keyup="clearServerErrors('userId')"
@@ -42,6 +43,7 @@
                                 :error-messages="startDateErrors"
                                 :value="formData.startDate"
                                 readonly
+                                data-cy="vacation-start-date-input"
                                 v-on="on"
                                 @input="$v.formData.startDate.$touch()"
                                 @blur="$v.formData.startDate.$touch()"
@@ -65,6 +67,7 @@
                                 :error-messages="endDateErrors"
                                 :value="formData.endDate"
                                 readonly
+                                data-cy="vacation-end-date-input"
                                 v-on="on"
                                 @input="$v.formData.endDate.$touch()"
                                 @blur="$v.formData.endDate.$touch()"
@@ -76,7 +79,7 @@
                     </v-menu>
 
                     <v-card-actions class="d-flex justify-center">
-                        <v-btn outlined color="primary" type="submit">submit</v-btn>
+                        <v-btn outlined color="primary" data-cy="vacation-submit-button" type="submit">submit</v-btn>
                     </v-card-actions>
                 </div>
             </v-form>

@@ -6,7 +6,13 @@
             <router-view />
         </transition>
 
-        <notifications classes="vue-notification" position="bottom center" :duration="5000" :ignoreDuplicates="true" />
+        <notifications
+            classes="vue-notification"
+            position="bottom center"
+            :duration="5000"
+            :ignoreDuplicates="true"
+            :max="1"
+        />
     </v-app>
 </template>
 
