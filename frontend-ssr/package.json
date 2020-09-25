@@ -1,5 +1,5 @@
 {
-  "name": "erp-system-ssr",
+  "name": "erpsystem-ssr",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -13,5 +13,7 @@
     "core-js": "^3.6.5",
     "nuxt": "^2.14.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.11.2"
+  }
 }

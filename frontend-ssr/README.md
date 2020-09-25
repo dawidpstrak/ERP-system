@@ -1,4 +1,4 @@
-# erp-system-ssr
+# erpsystem-ssr
 
 ## Build Setup
 
