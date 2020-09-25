@@ -1,89 +1,92 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+    <v-container fill-height fluid flex-column justify-center>
+        <v-card width="400">
+            <v-card-title>
+                <h1 class="display-1">Login</h1>
+            </v-card-title>
+            <v-card-text>
+                <v-form class="pb-0">
+                    <v-text-field
+                        v-model="credentials.email"
+                        label="Email"
+                        prepend-icon="mdi-account-circle"
+                        error-count="2"
+                        required
+                        :error-messages="emailErrors"
+                        data-cy="login-email-input"
+                        @input="$v.credentials.email.$touch()"
+                        @blur="$v.credentials.email.$touch()"
+                        @keyup="clearServerErrors('login')"
+                    />
+                    <v-text-field
+                        v-model="credentials.password"
+                        prepend-icon="mdi-lock"
+                        label="Password"
+                        error-count="2"
+                        required
+                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPassword ? 'text' : 'password'"
+                        :error-messages="passwordErrors"
+                        data-cy="login-password-input"
+                        @keyup.enter="loginRequest"
+                        @click:append="showPassword = !showPassword"
+                        @input="$v.credentials.password.$touch()"
+                        @blur="$v.credentials.password.$touch()"
+                        @keyup="clearServerErrors('password')"
+                    ></v-text-field>
+                </v-form>
+                <v-divider class="mt-6"></v-divider>
+                <v-card-actions class="justify-center">
+                    <v-btn data-cy="login-button" class="login-button ma-3" color="info" @click="loginRequest"
+                        >Login</v-btn
+                    >
+                </v-card-actions>
+            </v-card-text>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import { mapActions } from 'vuex';
+import NotifyingService from '@/services/NotifyingService';
+import loginValidatorMixin from '@/validators/auth/loginValidator.mixin';
 
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
-  }
-}
+    mixins: [loginValidatorMixin],
+    data() {
+        return {
+            showPassword: false,
+            credentials: {
+                email: '',
+                password: ''
+            }
+        };
+    },
+    methods: {
+        ...mapActions({
+            login: 'auth/login'
+        }),
+        async loginRequest() {
+            try {
+                this.$v.$touch();
+
+                if (!this.isValid) {
+                    return;
+                }
+
+                await this.login(this.credentials);
+
+                NotifyingService.loggedIn();
+
+                this.$router.push({ path: '/dashboard' });
+            } catch (error) {
+                if (!this.checkForServerFormErrors(error) && error.response) {
+                    NotifyingService.handleError(error);
+                }
+
+                console.error(error);
+            }
+        }
+    }
+};
 </script>
