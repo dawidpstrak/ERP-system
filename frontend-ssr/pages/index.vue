@@ -51,7 +51,6 @@ import { mapActions } from 'vuex';
 import loginValidatorMixin from '@/validators/auth/loginValidator.mixin';
 
 import NotificationService from '@/services/NotificationService';
-const notify = new NotificationService();
 
 export default {
     mixins: [loginValidatorMixin],
@@ -78,7 +77,7 @@ export default {
 
                 await this.login(this.credentials);
 
-                notify.loggedIn();
+                NotificationService.loggedIn();
 
                 this.$router.push({ path: '/dashboard' });
             } catch (error) {
