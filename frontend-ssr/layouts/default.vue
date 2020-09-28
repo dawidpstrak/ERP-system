@@ -1,14 +1,17 @@
 <template>
     <v-app>
         <nuxt />
-        <notifications
-            class="absolute"
-            classes="vue-notification"
-            position="bottom center"
-            :duration="5000"
-            :ignoreDuplicates="true"
-            :max="1"
-        />
+
+        <client-only>
+            <notifications
+                class="absolute"
+                classes="vue-notification"
+                position="bottom center"
+                :duration="5000"
+                :ignoreDuplicates="true"
+                :max="1"
+            />
+        </client-only>
     </v-app>
 </template>
 

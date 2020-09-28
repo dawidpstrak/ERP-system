@@ -16,7 +16,7 @@ export const mutations = {
 
 export const actions = {
     async fetchContracts({ commit }) {
-        const { data } = await this.$axios.get('/contracts');
+        const data = await this.$axios.$get('/contracts');
 
         commit('SET_CONTRACTS', data);
     },
@@ -28,12 +28,14 @@ export const actions = {
             await this.$axios.post('/contracts', contract);
         }
 
+        //TODO not needed dispatch just update existing array
         dispatch('fetchContracts');
     },
 
     async deleteContract({ dispatch }, id) {
         await this.$axios.delete(`/contracts/${id}`);
 
+        //TODO not needed dispatch just update existing array
         dispatch('fetchContracts');
     }
 };

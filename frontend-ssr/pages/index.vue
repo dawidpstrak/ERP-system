@@ -14,8 +14,8 @@
                         required
                         :error-messages="emailErrors"
                         data-cy="login-email-input"
-                        @input="$v.credentials.email.$touch()"
-                        @blur="$v.credentials.email.$touch()"
+                        @input="$v.credentials.email.$touch"
+                        @blur="$v.credentials.email.$touch"
                         @keyup="clearServerErrors('login')"
                     />
                     <v-text-field
@@ -30,10 +30,10 @@
                         data-cy="login-password-input"
                         @keyup.enter="loginRequest"
                         @click:append="showPassword = !showPassword"
-                        @input="$v.credentials.password.$touch()"
-                        @blur="$v.credentials.password.$touch()"
+                        @input="$v.credentials.password.$touch"
+                        @blur="$v.credentials.password.$touch"
                         @keyup="clearServerErrors('password')"
-                    ></v-text-field>
+                    />
                 </v-form>
                 <v-divider class="mt-6"></v-divider>
                 <v-card-actions class="justify-center">
@@ -48,8 +48,10 @@
 
 <script>
 import { mapActions } from 'vuex';
-import NotifyingService from '@/services/NotifyingService';
 import loginValidatorMixin from '@/validators/auth/loginValidator.mixin';
+
+import NotificationService from '@/services/NotificationService';
+const notify = new NotificationService();
 
 export default {
     mixins: [loginValidatorMixin],
@@ -76,12 +78,12 @@ export default {
 
                 await this.login(this.credentials);
 
-                NotifyingService.loggedIn();
+                notify.loggedIn();
 
                 this.$router.push({ path: '/dashboard' });
             } catch (error) {
-                if (!this.checkForServerFormErrors(error) && error.response) {
-                    NotifyingService.handleError(error);
+                if (!this.checkForServerFormErrors(error)) {
+                    NotificationService.handleError(error);
                 }
 
                 console.error(error);

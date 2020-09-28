@@ -1,5 +1,3 @@
-import AuthenticationService from '@/services/AuthenticationService';
-
 const initialState = () => {
     return {
         loggedUser: process.browser && JSON.parse(localStorage.getItem('loggedUser'))
@@ -32,14 +30,14 @@ export const mutations = {
 
 export const actions = {
     async login({ commit }, credentials) {
-        const { data } = await AuthenticationService.login(credentials, this.$axios);
+        const data = await this.$axios.$post('/auth/login', credentials);
 
         commit('SET_LOGGED_USER', data.loggedUser);
         commit('SET_USER_TOKEN', data.token);
     },
 
     async renewLoggedUserData({ commit }) {
-        const { data } = await this.$axios.get(`/me`);
+        const data = await this.$axios.$get(`/me`);
 
         commit('SET_LOGGED_USER', data);
     }

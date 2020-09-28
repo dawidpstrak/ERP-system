@@ -1,5 +1,3 @@
-import axios from '@/plugins/axios';
-
 export const state = () => {
     return {
         vacationRequests: []
@@ -18,31 +16,33 @@ export const mutations = {
 
 export const actions = {
     async fetchVacationRequests({ commit }) {
-        const { data } = await this.$axios.get('/vacationRequests');
+        const data = await this.$axios.$get('/vacationRequests');
 
         commit('SET_VACATION_REQUESTS', data);
     },
 
-    async saveVacationRequest({ dispatch, getters }, vacationRequest) {
+    async saveVacationRequest({ dispatch, rootGetters }, vacationRequest) {
         if (vacationRequest.id) {
             await this.$axios.put(`/vacationRequests/${vacationRequest.id}`, vacationRequest);
         } else {
             await this.$axios.post('/vacationRequests', vacationRequest);
         }
 
+        //TODO not needed dispatch just update existing array
         dispatch('fetchVacationRequests');
 
-        if (!getters.isAdmin) {
+        if (!rootGetters.isAdmin) {
             dispatch('renewLoggedUserData');
         }
     },
 
-    async deleteVacationRequest({ dispatch, getters }, id) {
+    async deleteVacationRequest({ dispatch, rootGetters }, id) {
         await this.$axios.delete(`/vacationRequests/${id}`);
 
+        //TODO not needed dispatch just update existing array
         dispatch('fetchVacationRequests');
 
-        if (!getters.isAdmin) {
+        if (!rootGetters.isAdmin) {
             dispatch('renewLoggedUserData');
         }
     }

@@ -4,8 +4,8 @@ export default {
     mixins: [validationMixin],
     methods: {
         mustBeAfterStartDate(startDate, endDate, inputName = 'endDate', formName = 'formData') {
-            const errors = [],
-                input = this.$v[formName][inputName];
+            const errors = [];
+            const input = this.$v[formName][inputName];
 
             if (!input.$dirty) {
                 return errors;

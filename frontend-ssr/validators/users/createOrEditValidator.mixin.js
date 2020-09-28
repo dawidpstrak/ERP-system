@@ -1,4 +1,4 @@
-import { required, requiredIf, email, minLength, maxLength } from 'vuelidate/lib/validators';
+import { required, email, minLength, maxLength } from 'vuelidate/lib/validators';
 import abstractValidatorMixin from '../abstractValidator.mixin';
 
 export default {
@@ -20,9 +20,7 @@ export default {
             lastName: { required, minLength: minLength(3), maxLength: maxLength(255) },
             email: { required, email },
             password: {
-                required: requiredIf(function() {
-                    return !this.formData.id;
-                }),
+                required: (v, obj) => !obj.id,
                 minLength: minLength(6),
                 maxLength: maxLength(255)
             },

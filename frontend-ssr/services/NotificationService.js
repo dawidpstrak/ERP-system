@@ -1,55 +1,59 @@
 import Vue from 'vue';
 
-export default {
-    loggedIn: () => {
+class NotificationService {
+    loggedIn() {
         Vue.notify({
             type: 'success',
             title: 'Sign in',
             text: 'You are logged successfully'
         });
-    },
+    }
 
-    loggedOut: () => {
+    loggedOut() {
         Vue.notify({
             type: 'success',
             title: 'Sign out',
             text: 'You are logged out'
         });
-    },
+    }
 
-    created: thing => {
+    created(thing) {
         Vue.notify({
             type: 'success',
             title: 'Success',
             text: 'Successfully created ' + thing
         });
-    },
+    }
 
-    updated: thing => {
+    updated(thing) {
         Vue.notify({
             type: 'success',
             title: 'Updated',
             text: 'Successfully updated ' + thing
         });
-    },
+    }
 
-    deleted: thing => {
+    deleted(thing) {
         Vue.notify({
             type: 'success',
             title: 'Deleted',
             text: 'Successfully deleted ' + thing
         });
-    },
+    }
 
-    noAccessRights: () => {
+    noAccessRights() {
         Vue.notify({
             type: 'error',
             title: 'No access rights',
             text: 'You can edit or delete only pending vacation requests'
         });
-    },
+    }
 
-    handleError: error => {
+    handleError(error) {
+        if (!error.response.status) {
+            return;
+        }
+
         switch (error.response.status) {
             case 500:
                 Vue.notify({
@@ -82,7 +86,7 @@ export default {
                 Vue.notify({
                     type: 'error',
                     title: 'No access rights',
-                    text: 'You need admin rights to access this resources'
+                    text: 'Access refused, limited permissions'
                 });
 
                 break;
@@ -100,4 +104,6 @@ export default {
                 break;
         }
     }
-};
+}
+
+export default NotificationService;

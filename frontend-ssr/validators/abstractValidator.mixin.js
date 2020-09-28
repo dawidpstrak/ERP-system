@@ -20,12 +20,13 @@ export default {
                     error.response.data.errors.map(error => {
                         if (this.serverErrors[error.param]) {
                             this.serverErrors[error.param] = [];
-                            this.serverErrors[error.param].push(error.message);
+                            this.serverErrors[error.param] = [error.message];
                         }
                     });
 
                     return true;
                 }
+
                 return false;
             }
         },
@@ -33,16 +34,18 @@ export default {
             this.serverErrors[type] = [];
         },
         checkServerErrors(inputName) {
-            const errors = [],
-                serverErrors = this.serverErrors[inputName];
+            let errors = [];
+            const serverErrors = this.serverErrors[inputName];
 
-            serverErrors.length && serverErrors.forEach(err => errors.push(err));
+            if (serverErrors.length) {
+                errors = serverErrors.map(err => err);
+            }
 
             return errors;
         },
         checkRequired(inputName, formName = 'formData') {
-            const errors = [],
-                input = this.$v[formName][inputName];
+            const errors = [];
+            const input = this.$v[formName][inputName];
 
             if (!input.$dirty) {
                 return errors;
@@ -53,8 +56,8 @@ export default {
             return errors;
         },
         checkEmail(inputName, formName = 'formData') {
-            const errors = [],
-                input = this.$v[formName][inputName];
+            const errors = [];
+            const input = this.$v[formName][inputName];
 
             if (!input.$dirty) {
                 return errors;
@@ -65,8 +68,8 @@ export default {
             return errors;
         },
         checkLength(inputName, formName = 'formData') {
-            const errors = [],
-                input = this.$v[formName][inputName];
+            const errors = [];
+            const input = this.$v[formName][inputName];
 
             if (!input.$dirty) {
                 return errors;

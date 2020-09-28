@@ -1,7 +1,7 @@
 export default ({ $axios, redirect }, inject) => {
     const axios = $axios.create();
 
-    axios.setBaseURL(process.env.NUXT_ENV_API_URL);
+    axios.setBaseURL(process.env.apiUrl);
 
     axios.onRequest(config => {
         const token = localStorage.getItem('token');

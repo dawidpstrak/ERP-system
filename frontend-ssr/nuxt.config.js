@@ -1,3 +1,5 @@
+const env = require('dotenv').config();
+
 export default {
     head: {
         titleTemplate: '%s - erpsystem-ssr',
@@ -10,13 +12,13 @@ export default {
         link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
     },
 
+    env: {
+        apiUrl: env.parsed.API_URL
+    },
+
     css: ['@/assets/main.scss'],
 
-    plugins: [
-        { src: '~/plugins/axios.js' },
-        { src: '~/plugins/notifications-ssr.js', mode: 'server' },
-        { src: '~/plugins/notifications-client.js', mode: 'client' }
-    ],
+    plugins: [{ src: '~/plugins/axios.js' }, { src: '~/plugins/notifications.js', mode: 'client' }],
 
     components: true,
 
