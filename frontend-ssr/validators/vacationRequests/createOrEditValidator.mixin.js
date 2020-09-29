@@ -1,6 +1,6 @@
 import { required, requiredIf } from 'vuelidate/lib/validators';
-import abstractValidatorMixin from '../abstractValidator.mixin';
-import customValidatorsMixin from '../customValidators.mixin';
+import abstractValidatorMixin from '@/abstractValidator.mixin';
+import customValidatorsMixin from '@/customValidators.mixin';
 import { mapGetters } from 'vuex';
 
 export default {

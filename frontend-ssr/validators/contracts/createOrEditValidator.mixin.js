@@ -1,5 +1,5 @@
 import { required } from 'vuelidate/lib/validators';
-import abstractValidatorMixin from '../abstractValidator.mixin';
+import abstractValidatorMixin from '@/abstractValidator.mixin';
 
 export default {
     mixins: [abstractValidatorMixin],
