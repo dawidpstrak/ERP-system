@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 class NotificationService {
-    loggedIn() {
+    static loggedIn() {
         Vue.notify({
             type: 'success',
             title: 'Sign in',
@@ -9,7 +9,7 @@ class NotificationService {
         });
     }
 
-    loggedOut() {
+    static loggedOut() {
         Vue.notify({
             type: 'success',
             title: 'Sign out',
@@ -17,7 +17,7 @@ class NotificationService {
         });
     }
 
-    created(thing) {
+    static created(thing) {
         Vue.notify({
             type: 'success',
             title: 'Success',
@@ -25,7 +25,7 @@ class NotificationService {
         });
     }
 
-    updated(thing) {
+    static updated(thing) {
         Vue.notify({
             type: 'success',
             title: 'Updated',
@@ -33,7 +33,7 @@ class NotificationService {
         });
     }
 
-    deleted(thing) {
+    static deleted(thing) {
         Vue.notify({
             type: 'success',
             title: 'Deleted',
@@ -41,7 +41,7 @@ class NotificationService {
         });
     }
 
-    noAccessRights() {
+    static noAccessRights() {
         Vue.notify({
             type: 'error',
             title: 'No access rights',
@@ -49,7 +49,7 @@ class NotificationService {
         });
     }
 
-    handleError(error) {
+    static handleError(error) {
         if (!error.response.status) {
             return;
         }
@@ -106,4 +106,4 @@ class NotificationService {
     }
 }
 
-export default new NotificationService();
+export default NotificationService;
