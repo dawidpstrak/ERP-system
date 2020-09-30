@@ -25,8 +25,8 @@
                         label="Set request status"
                         :items="requestStatuses"
                         :error-messages="statusErrors"
-                        @input="$v.formData.status.$touch()"
-                        @blur="$v.formData.status.$touch()"
+                        @input="$v.formData.status.$touch"
+                        @blur="$v.formData.status.$touch"
                         @keyup="clearServerErrors('status')"
                     />
 
@@ -45,8 +45,8 @@
                                 readonly
                                 data-cy="vacation-start-date-input"
                                 v-on="on"
-                                @input="$v.formData.startDate.$touch()"
-                                @blur="$v.formData.startDate.$touch()"
+                                @input="$v.formData.startDate.$touch"
+                                @blur="$v.formData.startDate.$touch"
                                 @keyup="clearServerErrors('startDate')"
                             />
                         </template>
@@ -69,8 +69,8 @@
                                 readonly
                                 data-cy="vacation-end-date-input"
                                 v-on="on"
-                                @input="$v.formData.endDate.$touch()"
-                                @blur="$v.formData.endDate.$touch()"
+                                @input="$v.formData.endDate.$touch"
+                                @blur="$v.formData.endDate.$touch"
                                 @keyup="clearServerErrors('endDate')"
                             />
                         </template>

@@ -15,8 +15,8 @@
                         :error-messages="firstNameErrors"
                         label="First name"
                         data-cy="user-first-name-input"
-                        @input="$v.formData.firstName.$touch()"
-                        @blur="$v.formData.firstName.$touch()"
+                        @input="$v.formData.firstName.$touch"
+                        @blur="$v.formData.firstName.$touch"
                         @keyup="clearServerErrors('firstName')"
                     />
 
@@ -25,8 +25,8 @@
                         :error-messages="lastNameErrors"
                         label="Last name"
                         data-cy="user-last-name-input"
-                        @input="$v.formData.lastName.$touch()"
-                        @blur="$v.formData.lastName.$touch()"
+                        @input="$v.formData.lastName.$touch"
+                        @blur="$v.formData.lastName.$touch"
                         @keyup="clearServerErrors('lastName')"
                     />
 
@@ -35,8 +35,8 @@
                         :error-messages="emailErrors"
                         label="Email"
                         data-cy="user-email-input"
-                        @input="$v.formData.email.$touch()"
-                        @blur="$v.formData.email.$touch()"
+                        @input="$v.formData.email.$touch"
+                        @blur="$v.formData.email.$touch"
                         @keyup="clearServerErrors('email')"
                     />
 
@@ -49,8 +49,8 @@
                         label="Password"
                         data-cy="user-password-input"
                         @click:append="showPassword = !showPassword"
-                        @input="$v.formData.password.$touch()"
-                        @blur="$v.formData.password.$touch()"
+                        @input="$v.formData.password.$touch"
+                        @blur="$v.formData.password.$touch"
                         @keyup="clearServerErrors('password')"
                     />
 
@@ -64,8 +64,8 @@
                                 readonly
                                 data-cy="user-birthdate-input"
                                 v-on="on"
-                                @input="$v.formData.birthDate.$touch()"
-                                @blur="$v.formData.birthDate.$touch()"
+                                @input="$v.formData.birthDate.$touch"
+                                @blur="$v.formData.birthDate.$touch"
                                 @keyup="clearServerErrors('birthDate')"
                             />
                         </template>
