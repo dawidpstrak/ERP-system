@@ -4,7 +4,7 @@
 
         <client-only>
             <notifications
-                class="absolute"
+                class="fixed"
                 classes="vue-notification"
                 position="bottom center"
                 :duration="5000"
@@ -16,7 +16,7 @@
 </template>
 
 <style scoped>
-.absolute {
-    position: absolute; /* workaround for initial rendering with position relative which not allow to render login component at the center */
+.fixed {
+    position: fixed; /* workaround for initial rendering with position relative which not allow to render login component at the center */
 }
 </style>

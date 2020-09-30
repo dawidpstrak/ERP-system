@@ -108,9 +108,18 @@ export default {
             resourceName: 'vacation request'
         };
     },
+
     computed: {
-        ...mapGetters({ contracts: 'contracts/contracts', vacationRequests: 'vacationRequests/vacationRequests' })
+        ...mapGetters({
+            contracts: 'contracts/contracts',
+            vacationRequests: 'vacationRequests/vacationRequests'
+        })
     },
+
+    created() {
+        Promise.all([this.fetchContracts(), this.fetchVacationRequests()]);
+    },
+
     methods: {
         ...mapActions({
             fetchContracts: 'contracts/fetchContracts',
@@ -165,9 +174,6 @@ export default {
                 console.error(error);
             }
         }
-    },
-    created() {
-        Promise.all([this.fetchContracts(), this.fetchVacationRequests()]);
     }
 };
 </script>

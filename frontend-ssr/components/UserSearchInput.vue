@@ -21,9 +21,18 @@ import { mapActions } from 'vuex';
 
 export default {
     props: {
-        value: String,
-        userData: Object,
-        errorMessages: Array
+        value: {
+            type: String,
+            required: true
+        },
+        userData: {
+            type: Object,
+            required: true
+        },
+        errorMessages: {
+            type: Array,
+            required: true
+        }
     },
 
     data() {

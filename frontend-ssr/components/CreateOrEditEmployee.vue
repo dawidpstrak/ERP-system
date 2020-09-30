@@ -89,8 +89,15 @@ import { mapActions } from 'vuex';
 
 export default {
     props: {
-        selectedItem: Object,
-        showCreateOrEditModal: Boolean
+        selectedItem: {
+            type: Object,
+            required: false,
+            default: null
+        },
+        showCreateOrEditModal: {
+            type: Boolean,
+            required: true
+        }
     },
 
     mixins: [createOrEditValidator],

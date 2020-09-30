@@ -71,8 +71,20 @@ export default {
             employeeToDeleteId: null
         };
     },
+
+    computed: {
+        ...mapGetters({ users: 'users/users' })
+    },
+
+    created() {
+        this.fetchUsers();
+    },
+
     methods: {
-        ...mapActions({ fetchUsers: 'users/fetchUsers', deleteUser: 'users/deleteUser' }),
+        ...mapActions({
+            fetchUsers: 'users/fetchUsers',
+            deleteUser: 'users/deleteUser'
+        }),
 
         openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;
@@ -103,12 +115,6 @@ export default {
                 console.error(error);
             }
         }
-    },
-    computed: {
-        ...mapGetters({ users: 'users/users' })
-    },
-    created() {
-        this.fetchUsers();
     }
 };
 </script>

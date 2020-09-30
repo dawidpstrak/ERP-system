@@ -27,8 +27,15 @@
 <script>
 export default {
     props: {
-        resourceName: String,
-        showConfirmDelete: Boolean
+        resourceName: {
+            type: String,
+            required: true
+        },
+
+        showConfirmDelete: {
+            type: Boolean,
+            required: true
+        }
     },
 
     methods: {

@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="isModalShown" width="350" persistent>
         <v-card>
-            <v-form data-cy="vacation-form" @submit.prevent="submit">
+            <v-form class="relative" data-cy="vacation-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6"
                     >{{ formTitle() }}
                     <v-btn icon @click="onClose">
@@ -96,8 +96,15 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
     props: {
-        selectedItem: Object,
-        showCreateOrEditModal: Boolean
+        selectedItem: {
+            type: Object,
+            required: false,
+            default: null
+        },
+        showCreateOrEditModal: {
+            type: Boolean,
+            required: true
+        }
     },
 
     mixins: [createOrEditValidation],
@@ -183,14 +190,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-.exit-btn {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-form {
-    position: relative;
-}
-</style>
