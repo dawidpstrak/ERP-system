@@ -22,9 +22,31 @@ export default {
 
     components: true,
 
+    router: {
+        middleware: ['auth']
+    },
+
+    auth: {
+        redirect: {
+            login: '/',
+            logout: '/',
+            home: '/dashboard'
+        },
+        strategies: {
+            local: {
+                endpoints: {
+                    login: { url: '/auth/login', method: 'post' },
+                    logout: false,
+                    user: false
+                }
+            }
+        },
+        localStorage: false
+    },
+
     buildModules: ['@nuxtjs/vuetify'],
 
-    modules: ['@nuxtjs/axios'],
+    modules: ['@nuxtjs/axios', '@nuxtjs/auth'],
 
     build: {
         extend: config => {

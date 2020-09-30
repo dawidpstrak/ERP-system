@@ -50,7 +50,7 @@ class NotificationService {
     }
 
     static handleError(error) {
-        if (!error.response.status) {
+        if (!error.response || !error.response.status) {
             return;
         }
 

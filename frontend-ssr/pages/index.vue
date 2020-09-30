@@ -64,9 +64,6 @@ export default {
         };
     },
     methods: {
-        ...mapActions({
-            login: 'auth/login'
-        }),
         async loginRequest() {
             try {
                 this.$v.$touch();
@@ -75,11 +72,11 @@ export default {
                     return;
                 }
 
-                await this.login(this.credentials);
+                const { data } = await this.$auth.loginWith('local', { data: this.credentials });
+
+                await this.$auth.setUser(data.loggedUser);
 
                 NotificationService.loggedIn();
-
-                this.$router.push({ path: '/dashboard' });
             } catch (error) {
                 if (!this.checkForServerFormErrors(error)) {
                     NotificationService.handleError(error);
