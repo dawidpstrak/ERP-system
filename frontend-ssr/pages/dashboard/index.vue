@@ -11,9 +11,20 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
+    asyncData({ store }) {
+        if (store.getters.isAdmin) {
+            return store.dispatch('users/fetchUsers');
+        } else {
+            return Promise.all([
+                store.dispatch('contracts/fetchContracts'),
+                store.dispatch('vacationRequests/fetchVacationRequests')
+            ]);
+        }
+    },
+
     computed: {
         ...mapGetters(['isAdmin'])
     }

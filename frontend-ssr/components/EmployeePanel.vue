@@ -116,14 +116,8 @@ export default {
         })
     },
 
-    created() {
-        Promise.all([this.fetchContracts(), this.fetchVacationRequests()]);
-    },
-
     methods: {
         ...mapActions({
-            fetchContracts: 'contracts/fetchContracts',
-            fetchVacationRequests: 'vacationRequests/fetchVacationRequests',
             deleteVacationRequest: 'vacationRequests/deleteVacationRequest'
         }),
 

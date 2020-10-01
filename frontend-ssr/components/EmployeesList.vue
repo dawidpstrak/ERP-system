@@ -76,13 +76,8 @@ export default {
         ...mapGetters({ users: 'users/users' })
     },
 
-    created() {
-        this.fetchUsers();
-    },
-
     methods: {
         ...mapActions({
-            fetchUsers: 'users/fetchUsers',
             deleteUser: 'users/deleteUser'
         }),
 
