@@ -78,7 +78,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(['deleteContract']),
+        ...mapActions({ deleteContract: 'contracts/deleteContract' }),
 
         openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;

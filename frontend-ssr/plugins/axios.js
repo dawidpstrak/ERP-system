@@ -18,6 +18,8 @@ export default ({ $axios, app }, inject) => {
             await app.$auth.logout();
         }
 
+        //TODO token expiration bug
+
         throw error;
     });
 

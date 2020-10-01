@@ -1,9 +1,9 @@
 <template>
-    <v-dialog v-model="isModalShown" width="350" persistent>
+    <v-dialog v-model="showCreateOrEditModal" width="350" persistent>
         <v-card>
             <v-form class="relative" data-cy="vacation-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6"
-                    >{{ formTitle() }}
+                    >{{ formTitle }}
                     <v-btn icon @click="onClose">
                         <v-icon>{{ 'mdi-location-exit' }}</v-icon>
                     </v-btn>
@@ -118,17 +118,24 @@ export default {
                 status: 'pending'
             },
             requestStatuses: ['active', 'pending'],
-            isModalShown: this.showCreateOrEditModal,
             resourceName: 'vacation request'
         };
     },
 
     computed: {
-        ...mapGetters(['isAdmin'])
+        ...mapGetters(['isAdmin']),
+
+        formTitle() {
+            return this.isCreateModal ? 'New vacation' : 'Edit vacation';
+        },
+
+        isCreateModal() {
+            return !this.selectedItem;
+        }
     },
 
     created() {
-        !this.isCreateModal() && this.setEditData();
+        !this.isCreateModal && this.setEditData();
     },
 
     methods: {
@@ -161,10 +168,6 @@ export default {
             }
         },
 
-        formTitle() {
-            return this.isCreateModal() ? 'New vacation' : 'Edit vacation';
-        },
-
         onClose() {
             this.$emit('closeModal');
         },
@@ -182,10 +185,6 @@ export default {
             this.formData = {
                 ...this.selectedItem
             };
-        },
-
-        isCreateModal() {
-            return !this.selectedItem;
         }
     }
 };

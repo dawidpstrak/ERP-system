@@ -1,9 +1,9 @@
 <template>
-    <v-dialog v-model="isModalShown" width="350" persistent>
+    <v-dialog v-model="showCreateOrEditModal" width="350" persistent>
         <v-card>
             <v-form data-cy="contract-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6">
-                    {{ formTitle() }}
+                    {{ formTitle }}
                     <v-btn icon @click="onClose">
                         <v-icon>{{ 'mdi-location-exit' }}</v-icon>
                     </v-btn>
@@ -100,19 +100,27 @@ export default {
             formData: {},
             durationOptions: [1, 3, 6, 12],
             vacationsPerYearOptions: [20, 26],
-            isModalShown: this.showCreateOrEditModal,
             resourceName: 'contract'
         };
     },
 
     created() {
-        this.isCreateModal() ? this.setDefaultFormData() : this.setEditData();
+        this.isCreateModal ? this.setDefaultFormData() : this.setEditData();
+    },
+
+    computed: {
+        isCreateModal() {
+            return !this.selectedItem;
+        },
+
+        formTitle() {
+            return this.isCreateModal ? 'New contract' : 'Edit contract';
+        }
     },
 
     methods: {
         ...mapActions({
-            saveContract: 'contracts/saveContract',
-            deleteContract: 'contracts/deleteContract'
+            saveContract: 'contracts/saveContract'
         }),
 
         async submit() {
@@ -139,10 +147,6 @@ export default {
             }
         },
 
-        formTitle() {
-            return this.isCreateModal() ? 'New contract' : 'Edit contract';
-        },
-
         onClose() {
             this.$emit('closeModal');
         },
@@ -153,10 +157,6 @@ export default {
 
         setEditData() {
             this.formData = { ...this.selectedItem };
-        },
-
-        isCreateModal() {
-            return !this.selectedItem;
         }
     }
 };
