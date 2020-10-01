@@ -32,7 +32,7 @@ export const actions = {
         dispatch('fetchVacationRequests');
 
         if (!rootGetters.isAdmin) {
-            dispatch('renewLoggedUserData');
+            dispatch('renewLoggedUserData', {}, { root: true }); // for dispatching action from another module
         }
     },
 
@@ -43,7 +43,7 @@ export const actions = {
         dispatch('fetchVacationRequests');
 
         if (!rootGetters.isAdmin) {
-            dispatch('renewLoggedUserData');
+            dispatch('renewLoggedUserData', {}, { root: true }); // for dispatching action from another module
         }
     }
 };
