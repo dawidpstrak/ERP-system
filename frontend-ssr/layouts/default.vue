@@ -1,7 +1,7 @@
 <template>
     <v-app>
+        <sidebar v-if="$auth.loggedIn" />
         <nuxt />
-
         <client-only>
             <notifications
                 class="fixed"

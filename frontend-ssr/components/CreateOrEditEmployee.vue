@@ -1,9 +1,9 @@
 <template>
-    <v-dialog v-model="isModalShown" width="350" persistent>
+    <v-dialog v-model="showCreateOrEditModal" width="350" persistent>
         <v-card>
             <v-form data-cy="employee-form" @submit.prevent="submit">
                 <v-card-title class="d-flex justify-space-between px-6"
-                    >{{ formTitle() }}
+                    >{{ formTitle }}
                     <v-btn icon @click="onClose">
                         <v-icon>{{ 'mdi-location-exit' }}</v-icon>
                     </v-btn>
@@ -41,7 +41,7 @@
                     />
 
                     <v-text-field
-                        v-if="isCreateModal()"
+                        v-if="isCreateModal"
                         v-model="formData.password"
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :error-messages="passwordErrors"
@@ -118,13 +118,22 @@ export default {
             },
             formData: {},
             showPassword: false,
-            isModalShown: this.showCreateOrEditModal,
             resourceName: 'user'
         };
     },
 
     created() {
-        this.isCreateModal() ? this.setDefaultFormData() : this.setEditData();
+        this.isCreateModal ? this.setDefaultFormData() : this.setEditData();
+    },
+
+    computed: {
+        formTitle() {
+            return this.isCreateModal ? 'New employee' : 'Edit employee';
+        },
+
+        isCreateModal() {
+            return !this.selectedItem;
+        }
     },
 
     methods: {
@@ -153,10 +162,6 @@ export default {
             }
         },
 
-        formTitle() {
-            return this.isCreateModal() ? 'New employee' : 'Edit employee';
-        },
-
         onClose() {
             this.showConfirmDelete = false;
             this.$emit('closeModal');
@@ -168,10 +173,6 @@ export default {
 
         setEditData() {
             this.formData = { ...this.selectedItem };
-        },
-
-        isCreateModal() {
-            return !this.selectedItem;
         }
     }
 };

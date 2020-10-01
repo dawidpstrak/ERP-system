@@ -1,4 +1,4 @@
-@media (max-width: 990px) {
+@media (max-width: 989px) {
     #app div.v-data-table__wrapper table thead tr {
         display: none;
     }
@@ -69,4 +69,12 @@
 
 .relative {
     position: relative;
+}
+
+.nuxt-link-active {
+    background-color: #2b80d5;
+}
+
+.v-list-item {
+    background-color: inherit;
 }
