@@ -11,6 +11,22 @@ export const getters = {
 export const mutations = {
     SET_CONTRACTS(state, contracts) {
         state.contracts = contracts;
+    },
+
+    ADD_CONTRACT(state, newContract) {
+        state.contracts.push(newContract);
+    },
+
+    UPDATE_CONTRACT(state, updatedContract) {
+        const newState = state.contracts.filter(contract => contract.id !== updatedContract.id);
+
+        newState.push(updatedContract);
+
+        state.contracts = newState;
+    },
+
+    DELETE_CONTRACT(state, id) {
+        state.contracts = state.contracts.filter(contract => contract.id !== id);
     }
 };
 
@@ -21,21 +37,21 @@ export const actions = {
         commit('SET_CONTRACTS', data);
     },
 
-    async saveContract({ dispatch }, contract) {
+    async saveContract({ commit }, contract) {
         if (contract.id) {
-            await this.$axios.put(`/contracts/${contract.id}`, contract);
-        } else {
-            await this.$axios.post('/contracts', contract);
-        }
+            const updatedContract = await this.$axios.$put(`/contracts/${contract.id}`, contract);
 
-        //TODO not needed dispatch just update existing array
-        dispatch('fetchContracts');
+            commit('UPDATE_CONTRACT', updatedContract);
+        } else {
+            const newContract = await this.$axios.$post('/contracts', contract);
+
+            commit('ADD_CONTRACT', newContract);
+        }
     },
 
-    async deleteContract({ dispatch }, id) {
+    async deleteContract({ commit }, id) {
         await this.$axios.delete(`/contracts/${id}`);
 
-        //TODO not needed dispatch just update existing array
-        dispatch('fetchContracts');
+        commit('DELETE_CONTRACT', id);
     }
 };

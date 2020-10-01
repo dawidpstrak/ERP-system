@@ -55,7 +55,7 @@ class VacationRequestController {
 
             const requestedDaysOff = this.moment.duration(this.moment(endDate).diff(this.moment(startDate))).days();
 
-            const newVacationRequest = await this.vacationRequestRepository.create({
+            const vacationRequest = await this.vacationRequestRepository.create({
                 ...req.body,
                 userId: isAdmin ? userId : loggedUserId,
                 status: isAdmin ? status : VacationRequest.PENDING,
@@ -63,6 +63,8 @@ class VacationRequestController {
             });
 
             await this.userDaysOffAmountCalculator.onVacationRequestStore(user, requestedDaysOff);
+
+            const newVacationRequest = await this.vacationRequestRepository.findOneById(vacationRequest.id);
 
             return res.status(HTTP.CREATED).send(newVacationRequest);
         } catch (error) {
@@ -129,7 +131,7 @@ class VacationRequestController {
                 actualRequestedDaysOff
             );
 
-            const updatedVacationRequest = await this.vacationRequestRepository.findByPk(vacationRequestId);
+            const updatedVacationRequest = await this.vacationRequestRepository.findOneById(vacationRequestId);
 
             return res.send(updatedVacationRequest);
         } catch (error) {

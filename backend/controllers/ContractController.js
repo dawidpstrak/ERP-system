@@ -77,7 +77,9 @@ class ContractController {
 
             await this.userDaysOffAmountCalculator.onContractStore(user, contractDaysOffAmount);
 
-            return res.status(HTTP.CREATED).send(contract);
+            const newContract = await this.contractRepository.findOneById(contract.id);
+
+            return res.status(HTTP.CREATED).send(newContract);
         } catch (error) {
             console.error(error);
 
@@ -139,7 +141,7 @@ class ContractController {
                 actualAvailableDaysOffAmount
             );
 
-            const updatedContract = await this.contractRepository.findByPk(contractId);
+            const updatedContract = await this.contractRepository.findOneById(contractId);
 
             return res.send(updatedContract);
         } catch (error) {

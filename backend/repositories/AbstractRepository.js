@@ -18,7 +18,10 @@ class AbstractRepository {
             where: {
                 id
             },
-            ...options
+            include: {
+                association: 'user',
+                attributes: ['firstName', 'lastName']
+            }
         });
     }
 
