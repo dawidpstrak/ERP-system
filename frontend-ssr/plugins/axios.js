@@ -5,20 +5,20 @@ export default ({ $axios, app }, inject) => {
 
     axios.setBaseURL(process.env.apiUrl);
 
-    const isNotLoginError = error => {
+    const tokenExpired = error => {
         return (
             error.response &&
-            error.response.data.message !== 'Wrong credentials' &&
-            error.response.status === HTTP.UNAUTHORIZED
+            error.response.status === HTTP.UNAUTHORIZED &&
+            error.response.data.message !== 'Wrong credentials'
         );
     };
 
     axios.onError(async error => {
-        if (error.response && error.response.status === HTTP.UNAUTHORIZED && isNotLoginError(error)) {
-            // JWT token expired  - logout
-
+        if (tokenExpired(error)) {
             await app.$auth.logout();
         }
+
+        throw error;
     });
 
     inject('axios', axios);

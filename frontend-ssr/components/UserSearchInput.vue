@@ -70,7 +70,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(['searchUsers']),
+        ...mapActions({ fetchUsers: 'users/fetchUsers' }),
 
         async onUpdateEmployeeSearch(query) {
             if (!query || this.isLoading || query.length < this.minimumQuerySearchLength) {
@@ -83,7 +83,7 @@ export default {
 
             this.isLoading = true;
 
-            this.searchedEmployees = await this.searchUsers(query);
+            this.searchedEmployees = await this.fetchUsers(query);
 
             this.isLoading = false;
         },
