@@ -23,11 +23,11 @@ export default {
     props: {
         value: {
             type: String,
-            required: true
+            required: false
         },
         userData: {
             type: Object,
-            required: true
+            required: false
         },
         errorMessages: {
             type: Array,
