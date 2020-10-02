@@ -1,30 +1,37 @@
 <template>
     <v-app>
-        <!-- <side-bar />
-        <v-container> {{ title }} </v-container> -->
+        <v-container class="spacer">
+            <h2>{{ title }}</h2>
+        </v-container>
     </v-app>
 </template>
 
 <script>
 export default {
-    layout: 'default',
     props: {
         error: {
             type: Object,
             default: null
         }
     },
+
     data() {
         return {
             pageNotFound: '404 Not Found',
             otherError: 'An error occurred'
         };
     },
+
     head() {
-        const title = this.error.statusCode === 404 ? this.pageNotFound : this.otherError;
         return {
-            title
+            title: this.title
         };
+    },
+
+    computed: {
+        title() {
+            return this.error.statusCode === 404 ? this.pageNotFound : this.otherError;
+        }
     }
 };
 </script>
