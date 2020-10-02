@@ -23,7 +23,7 @@ export default {
     components: true,
 
     router: {
-        middleware: ['auth']
+        middleware: ['auth', 'adminOnly']
     },
 
     auth: {
