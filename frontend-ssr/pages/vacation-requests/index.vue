@@ -52,7 +52,7 @@ export default {
         try {
             return store.dispatch('vacationRequests/fetchVacationRequests');
         } catch (error) {
-            NotificationService(error);
+            process.client && NotificationService(error);
 
             console.error(error);
         }

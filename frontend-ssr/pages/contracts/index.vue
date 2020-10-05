@@ -51,7 +51,7 @@ export default {
         try {
             return store.dispatch('contracts/fetchContracts');
         } catch (error) {
-            NotificationService(error);
+            process.client && NotificationService(error);
 
             console.error(error);
         }

@@ -12,6 +12,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import NotificationService from '@/services/NotificationService';
 
 export default {
     asyncData({ store }) {
@@ -25,7 +26,7 @@ export default {
                 ]);
             }
         } catch (error) {
-            NotificationService(error);
+            process.client && NotificationService(error);
 
             console.error(error);
         }
