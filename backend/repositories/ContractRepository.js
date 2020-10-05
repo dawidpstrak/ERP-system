@@ -7,6 +7,18 @@ class ContractRepository extends AbstractRepository {
         return Contract;
     }
 
+    findOneById(id, options) {
+        return this.model.findOne({
+            where: {
+                id
+            },
+            include: {
+                association: 'user',
+                attributes: ['firstName', 'lastName']
+            }
+        });
+    }
+
     getAll(options = {}) {
         return this.model.findAll({
             include: {

@@ -18,7 +18,7 @@ class AbstractRepository {
             where: {
                 id
             },
-            ...options
+            options
         });
     }
 

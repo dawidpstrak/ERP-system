@@ -2,19 +2,20 @@
     <v-container class="spacer" fluid>
         <v-card>
             <v-card class="d-flex align-center justify-space-between" outlined>
-                <v-card-title class="ml-6">Contracts</v-card-title>
-                <v-btn class="mr-6" outlined color="primary" data-cy="add-contract-button" @click="openCreateOrEdit()">
-                    <v-icon left>mdi-plus</v-icon>contract
+                <v-card-title class="ml-6">Vacation requests</v-card-title>
+                <v-btn class="mr-6" outlined color="primary" data-cy="add-vacation-button" @click="openCreateOrEdit()">
+                    <v-icon left>mdi-plus</v-icon>Vacation Requests
                 </v-btn>
             </v-card>
 
             <v-data-table
-                :headers="headers"
-                :items="contracts"
+                :headers="vacationRequestsProps.headers"
+                :items="vacationRequests"
                 :items-per-page="5"
                 :mobile-breakpoint="990"
-                :footer-props="footerProps"
-                data-cy="contracts-list"
+                :footer-props="vacationRequestsProps.footer"
+                :sort-by="'startDate'"
+                data-cy="vacations-list"
                 class="elevation-1"
             >
                 <template v-slot:item.actions="{ item }">
@@ -23,7 +24,7 @@
                 </template>
             </v-data-table>
 
-            <create-or-edit-contract
+            <create-or-edit-vacation-request
                 v-if="showCreateOrEditModal"
                 :showCreateOrEditModal="showCreateOrEditModal"
                 :selectedItem="selectedItem"
@@ -44,12 +45,12 @@
 <script>
 import NotificationService from '@/services/NotificationService';
 
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     asyncData({ store }) {
         try {
-            return store.dispatch('contracts/fetchContracts');
+            return store.dispatch('vacationRequests/fetchVacationRequests');
         } catch (error) {
             process.client && NotificationService(error);
 
@@ -59,32 +60,34 @@ export default {
 
     data() {
         return {
-            headers: [
-                { text: 'Employee name', align: 'center', value: 'user.firstName', sortable: false },
-                { text: 'Employee surname', align: 'center', value: 'user.lastName', sortable: false },
-                { text: 'Start date', align: 'center', value: 'startDate', sortable: false },
-                { text: 'End date', align: 'center', value: 'endDate', sortable: false },
-                { text: 'Duration/months', align: 'center', value: 'duration', sortable: false },
-                { text: 'Available days off', align: 'center', value: 'availableDaysOffAmount', sortable: false },
-                { text: 'Actions', value: 'actions', sortable: false }
-            ],
-            footerProps: {
-                itemsPerPageText: 'Contracts per page'
+            vacationRequestsProps: {
+                headers: [
+                    { text: 'Employee Name', align: 'center', value: 'user.firstName', sortable: false },
+                    { text: 'Employee surname', align: 'center', value: 'user.lastName', sortable: false },
+                    { text: 'Vacation start', align: 'center', value: 'startDate', sortable: false },
+                    { text: 'Vacation end', align: 'center', value: 'endDate', sortable: false },
+                    { text: 'Requested days off', align: 'center', value: 'requestedDaysOff', sortable: false },
+                    { text: 'Status', align: 'center', value: 'status', sortable: false },
+                    { text: 'Actions', value: 'actions', sortable: false }
+                ],
+                footer: {
+                    itemsPerPageText: 'Vacation requests per page'
+                }
             },
             showCreateOrEditModal: false,
             showConfirmDelete: false,
-            contractToDeleteId: null,
             selectedItem: null,
-            resourceName: 'contract'
+            vacationRequestToDeleteId: null,
+            resourceName: 'vacation request'
         };
     },
 
     computed: {
-        ...mapGetters({ contracts: 'contracts/contracts' })
+        ...mapGetters({ vacationRequests: 'vacationRequests/vacationRequests' })
     },
 
     methods: {
-        ...mapActions({ deleteContract: 'contracts/deleteContract' }),
+        ...mapActions({ deleteVacationRequest: 'vacationRequests/deleteVacationRequest' }),
 
         openCreateOrEdit(selectedItem = null) {
             this.selectedItem = selectedItem;
@@ -96,16 +99,16 @@ export default {
             this.showCreateOrEditModal = false;
         },
 
-        openConfirmDelete(contract) {
-            this.contractToDeleteId = contract.id;
+        openConfirmDelete(vacationRequest) {
+            this.vacationRequestToDeleteId = vacationRequest.id;
             this.showConfirmDelete = true;
         },
 
         async onDelete() {
             try {
-                await this.deleteContract(this.contractToDeleteId);
+                await this.deleteVacationRequest(this.vacationRequestToDeleteId);
 
-                this.contractToDeleteId = null;
+                this.vacationRequestToDeleteId = null;
                 this.showConfirmDelete = false;
 
                 NotificationService.deleted(this.resourceName);

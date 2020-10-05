@@ -11,6 +11,20 @@ export const getters = {
 export const mutations = {
     SET_VACATION_REQUESTS(state, vacationRequests) {
         state.vacationRequests = vacationRequests;
+    },
+
+    ADD_VACATION_REQUEST(state, newVacationRequest) {
+        state.vacationRequests.push(newVacationRequest);
+    },
+
+    UPDATE_VACATION_REQUEST(state, updatedVacationRequest) {
+        state.vacationRequests = state.vacationRequests.map(vacationRequest =>
+            vacationRequest.id !== updatedVacationRequest.id ? vacationRequest : updatedVacationRequest
+        );
+    },
+
+    DELETE_VACATION_REQUEST(state, id) {
+        state.vacationRequests = state.vacationRequests.filter(vacationRequest => vacationRequest.id !== id);
     }
 };
 
@@ -21,26 +35,29 @@ export const actions = {
         commit('SET_VACATION_REQUESTS', data);
     },
 
-    async saveVacationRequest({ dispatch, rootGetters }, vacationRequest) {
+    async saveVacationRequest({ dispatch, commit, rootGetters }, vacationRequest) {
         if (vacationRequest.id) {
-            await this.$axios.put(`/vacationRequests/${vacationRequest.id}`, vacationRequest);
-        } else {
-            await this.$axios.post('/vacationRequests', vacationRequest);
-        }
+            const updatedVacationRequest = await this.$axios.$put(
+                `/vacationRequests/${vacationRequest.id}`,
+                vacationRequest
+            );
 
-        //TODO not needed dispatch just update existing array
-        dispatch('fetchVacationRequests');
+            commit('UPDATE_VACATION_REQUEST', updatedVacationRequest);
+        } else {
+            const newVacationRequest = await this.$axios.$post('/vacationRequests', vacationRequest);
+
+            commit('ADD_VACATION_REQUEST', newVacationRequest);
+        }
 
         if (!rootGetters.isAdmin) {
             dispatch('renewLoggedUserData', {}, { root: true }); // for dispatching action from another module
         }
     },
 
-    async deleteVacationRequest({ dispatch, rootGetters }, id) {
+    async deleteVacationRequest({ dispatch, commit, rootGetters }, id) {
         await this.$axios.delete(`/vacationRequests/${id}`);
 
-        //TODO not needed dispatch just update existing array
-        dispatch('fetchVacationRequests');
+        commit('DELETE_VACATION_REQUEST', id);
 
         if (!rootGetters.isAdmin) {
             dispatch('renewLoggedUserData', {}, { root: true }); // for dispatching action from another module

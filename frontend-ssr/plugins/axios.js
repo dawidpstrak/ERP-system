@@ -1,6 +1,6 @@
 import HTTP from 'http-status-codes';
 
-export default ({ $axios, app }, inject) => {
+export default ({ $axios, app, redirect, route }, inject) => {
     const axios = $axios.create();
 
     axios.setBaseURL(process.env.apiUrl);
@@ -16,11 +16,14 @@ export default ({ $axios, app }, inject) => {
     axios.onError(async error => {
         if (tokenExpired(error)) {
             await app.$auth.logout();
+
+            if (route.path !== '/') {
+                // in case when token expired and user refreshed page $auth.logout() not redirecting to /
+                redirect('/');
+            }
+        } else {
+            throw error;
         }
-
-        //TODO token expiration bug
-
-        throw error;
     });
 
     inject('axios', axios);
