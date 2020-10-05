@@ -28,7 +28,7 @@
                 v-if="showCreateOrEditModal"
                 :showCreateOrEditModal="showCreateOrEditModal"
                 :selectedItem="selectedItem"
-                @closeModal="closeCreateOrEdit()"
+                @closeModal="closeCreateOrEdit"
             />
 
             <confirm-delete
@@ -49,7 +49,13 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
     asyncData({ store }) {
-        return store.dispatch('vacationRequests/fetchVacationRequests');
+        try {
+            return store.dispatch('vacationRequests/fetchVacationRequests');
+        } catch (error) {
+            NotificationService(error);
+
+            console.error(error);
+        }
     },
 
     data() {

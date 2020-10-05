@@ -15,13 +15,19 @@ import { mapGetters } from 'vuex';
 
 export default {
     asyncData({ store }) {
-        if (store.getters.isAdmin) {
-            return store.dispatch('users/fetchUsers');
-        } else {
-            return Promise.all([
-                store.dispatch('contracts/fetchContracts'),
-                store.dispatch('vacationRequests/fetchVacationRequests')
-            ]);
+        try {
+            if (store.getters.isAdmin) {
+                return store.dispatch('users/fetchUsers');
+            } else {
+                return Promise.all([
+                    store.dispatch('contracts/fetchContracts'),
+                    store.dispatch('vacationRequests/fetchVacationRequests')
+                ]);
+            }
+        } catch (error) {
+            NotificationService(error);
+
+            console.error(error);
         }
     },
 

@@ -48,7 +48,13 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
     asyncData({ store }) {
-        return store.dispatch('contracts/fetchContracts');
+        try {
+            return store.dispatch('contracts/fetchContracts');
+        } catch (error) {
+            NotificationService(error);
+
+            console.error(error);
+        }
     },
 
     data() {

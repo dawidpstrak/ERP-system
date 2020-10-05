@@ -18,11 +18,7 @@ export const mutations = {
     },
 
     UPDATE_USER(state, updatedUser) {
-        const newState = state.users.filter(user => user.id !== updatedUser.id);
-
-        newState.push(updatedUser);
-
-        state.users = newState;
+        state.users = state.users.map(user => (user.id !== updatedUser.id ? user : updatedUser));
     },
 
     DELETE_USER(state, id) {

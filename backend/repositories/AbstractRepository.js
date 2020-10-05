@@ -13,18 +13,6 @@ class AbstractRepository {
         return this.model.findByPk(Pk);
     }
 
-    findOneById(id, options) {
-        return this.model.findOne({
-            where: {
-                id
-            },
-            include: {
-                association: 'user',
-                attributes: ['firstName', 'lastName']
-            }
-        });
-    }
-
     getAll() {
         return this.model.findAll();
     }

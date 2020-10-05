@@ -18,13 +18,9 @@ export const mutations = {
     },
 
     UPDATE_VACATION_REQUEST(state, updatedVacationRequest) {
-        const newState = state.vacationRequests.filter(
-            vacationRequest => vacationRequest.id !== updatedVacationRequest.id
+        state.vacationRequests = state.vacationRequests.map(vacationRequest =>
+            vacationRequest.id !== updatedVacationRequest.id ? vacationRequest : updatedVacationRequest
         );
-
-        newState.push(updatedVacationRequest);
-
-        state.vacationRequests = newState;
     },
 
     DELETE_VACATION_REQUEST(state, id) {

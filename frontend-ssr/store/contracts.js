@@ -18,11 +18,9 @@ export const mutations = {
     },
 
     UPDATE_CONTRACT(state, updatedContract) {
-        const newState = state.contracts.filter(contract => contract.id !== updatedContract.id);
-
-        newState.push(updatedContract);
-
-        state.contracts = newState;
+        state.contracts = state.contracts.map(contract =>
+            contract.id !== updatedContract.id ? contract : updatedContract
+        );
     },
 
     DELETE_CONTRACT(state, id) {

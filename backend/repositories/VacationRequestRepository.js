@@ -6,6 +6,18 @@ class VacationRequestRepository extends AbstractRepository {
         return VacationRequest;
     }
 
+    findOneById(id, options) {
+        return this.model.findOne({
+            where: {
+                id
+            },
+            include: {
+                association: 'user',
+                attributes: ['firstName', 'lastName']
+            }
+        });
+    }
+
     getAllWithUser() {
         return this.model.findAll({
             include: {
