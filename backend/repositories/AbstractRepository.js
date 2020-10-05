@@ -13,6 +13,15 @@ class AbstractRepository {
         return this.model.findByPk(Pk);
     }
 
+    findOneById(id, options) {
+        return this.model.findOne({
+            where: {
+                id
+            },
+            options
+        });
+    }
+
     getAll() {
         return this.model.findAll();
     }
